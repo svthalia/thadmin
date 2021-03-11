@@ -15,18 +15,19 @@ class AuthenticationError extends Error {
 }
 
 const AuthStatus = {
-    INIT: "init", SIGNED_IN: "signed_in", SIGNED_OUT: "signed_out"
+    SIGNED_IN: "signed_in", SIGNED_OUT: "signed_out"
 }
 
-const AuthService = {
-    status: AuthStatus.INIT,
+class AuthService {
 
-    init() {
-        //Initialise
-        console.log("Auth");
-    },
+    constructor() {
+        this.status = AuthStatus.SIGNED_OUT;
+        if (TokenService.getToken() !== null) {
+            this.status = AuthStatus.SIGNED_IN;
+        }
+    }
 
-    signIn: async function(signInData) {
+    async signIn(signInData) {
         const requestData = {
             method: "post",
             headers: {
@@ -43,8 +44,8 @@ const AuthService = {
 
         try {
             const response = await ApiService.customRequest(requestData);
-            TokenService.saveToken(response.data.access_token);
-            TokenService.saveRefreshToken(response.data.refresh_token);
+            TokenService.setToken(response.data.access_token);
+            TokenService.setRefreshToken(response.data.refresh_token);
             ApiService.setHeader();
 
             ApiService.mount401Interceptor();
@@ -53,9 +54,9 @@ const AuthService = {
         } catch (error) {
             this.catchError(error);
         }
-    },
+    }
 
-    refreshToken: async function() {
+    async refreshToken() {
         const refreshToken = TokenService.getRefreshToken();
 
         const requestData = {
@@ -85,16 +86,16 @@ const AuthService = {
                 error.response.data.error_description
             );
         }
-    },
+    }
 
     signOut() {
         TokenService.removeToken();
         TokenService.removeRefreshToken();
         ApiService.removeHeader();
         ApiService.unmount401Interceptor();
-    },
+    }
 
-    catchError: function(error) {
+    catchError(error) {
         let status;
         let description;
 
