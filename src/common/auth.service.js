@@ -18,7 +18,7 @@ const AuthStatus = {
     SIGNED_IN: "signed_in", SIGNED_OUT: "signed_out"
 }
 
-class AuthService {
+class _AuthService {
 
     constructor() {
         this.status = AuthStatus.SIGNED_OUT;
@@ -110,5 +110,7 @@ class AuthService {
         throw new AuthenticationError(status, description);
     }
 }
+
+const AuthService = new _AuthService();
 
 export { AuthService, AuthenticationError, AuthStatus };

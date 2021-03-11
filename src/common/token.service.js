@@ -5,7 +5,7 @@ class _TokenService {
 
     constructor() {
         this.token = localStorage.getItem(TOKEN_KEY);
-        this.refresh_token = TokenService.getItem(REFRESH_TOKEN_KEY);
+        this.refresh_token = localStorage.getItem(REFRESH_TOKEN_KEY);
     }
 
     getToken() {
@@ -37,6 +37,6 @@ class _TokenService {
     }
 }
 
-let TokenService = _TokenService();
+let TokenService = new _TokenService();
 
 export { TokenService };
