@@ -1,6 +1,7 @@
 import ApiService from "@/common/api.service";
-import { TokenService } from "@/common/token.service";
-import qs from "qs";
+import { TokenService } from "@/common/token.service.ts";
+import axios from "axios";
+import * as qs from "qs";
 
 class AuthenticationError extends Error {
     errorCode;
@@ -21,52 +22,91 @@ const AuthStatus = {
 class _AuthService {
 
     constructor() {
+        this.code = "EKveChUBUhNlKqIvnR8zeKAgOhCdGD";
         this.status = AuthStatus.SIGNED_OUT;
         if (TokenService.getToken() !== null) {
             this.status = AuthStatus.SIGNED_IN;
         }
+        this.clientId = '0L5puPQdSfLS2X7tb1zglMVDjYUWKJJB9shTqCtQ';
+        this.clientSecret = 'UOd71y6ncUdpKyPXFnr4DT6HDodXiWVI3QbvmLdQKuPol0hFPKHR7BEVLqI3oFhBg0PuYU7YPHFt08CFqlfxLxtehdNqsTs2Fn52nofus8aw4d1Y3FVc841PwWewSbnt';
+        this.accessTokenUri = 'http://localhost:8000/user/oauth/token/';
+        this.authorizationUri = 'http://localhost:8000/user/oauth/authorize/';
+        this.redirectUri = 'https://localhost:8000/auth/callback/';
+        this.scopes = ['read', 'write', 'members:read', 'activemembers:read'];
     }
 
-    async signIn(signInData) {
+    authorize() {
+        const redirect_url = new URL(this.authorizationUri);
+        redirect_url.searchParams.append("client_id", this.clientId);
+        redirect_url.searchParams.append("response_type", "code");
+        window.location.href = redirect_url.href;
+    }
+
+    callback() {
+
+    }
+
+    async signIn(username, password) {
         const requestData = {
             method: "post",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: 'Basic ' + btoa(process.env.VUE_APP_CLIENT_ID + ':' + process.env.VUE_APP_CLIENT_SECRET)
+                "Content-Type": "application/json",
+                "Accept": 'application/json',
             },
-            url: "/oauth/token",
-            data: qs.stringify({
-                "grant_type": "password",
-                username: signInData.username,
-                password: signInData.password
-            })
+            url: "http://localhost:8000/api/v1/token-auth/",
+            data: JSON.stringify({"username": username, "password": password}),
         };
 
         try {
-            const response = await ApiService.customRequest(requestData);
+            const response = await axios(requestData);
+            console.log(response.data);
             TokenService.setToken(response.data.access_token);
-            TokenService.setRefreshToken(response.data.refresh_token);
-            ApiService.setHeader();
+            //TokenService.setRefreshToken(response.data.refresh_token);
 
-            ApiService.mount401Interceptor();
-
-            return response.data.access_token;
+            //return response.data.access_token;
         } catch (error) {
             this.catchError(error);
         }
     }
 
-    async refreshToken() {
+    requestAuthorizationToken() {
+        const requestData = {
+            method: "post",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            url: this.accessTokenUri,
+            data: qs.stringify({
+                "grant_type": "authorization_code",
+                "code": this.code,
+                "client_id": this.clientId,
+            }),
+        }
+
+        try {
+            const response = axios(requestData);
+
+            console.log(response.data);
+
+            return response.data.access_token;
+        } catch (error) {
+            throw new AuthenticationError(
+                error.response.status,
+                error.response.data.error_description
+            );
+        }
+    }
+
+    async refreshTokens() {
         const refreshToken = TokenService.getRefreshToken();
 
         const requestData = {
             method: "post",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: 'Basic ' + btoa(process.env.VUE_APP_CLIENT_ID + ':' + process.env.VUE_APP_CLIENT_SECRET)
+                "Content-Type": "application/json",
             },
-            url: "/oauth/token",
-            data: qs.stringify({
+            url: this.accessTokenUri,
+            data: JSON.stringify({
                 "grant_type": "refresh_token",
                 refreshToken: refreshToken
             })
@@ -75,9 +115,8 @@ class _AuthService {
         try {
             const response = await ApiService.customRequest(requestData);
 
-            TokenService.saveToken(response.data.access_token);
-            TokenService.saveRefreshToken(response.data.refresh_token);
-            ApiService.setHeader();
+            TokenService.setToken(response.data.access_token);
+            TokenService.setRefreshToken(response.data.refresh_token);
 
             return response.data.access_token;
         } catch (error) {
@@ -91,8 +130,6 @@ class _AuthService {
     signOut() {
         TokenService.removeToken();
         TokenService.removeRefreshToken();
-        ApiService.removeHeader();
-        ApiService.unmount401Interceptor();
     }
 
     catchError(error) {

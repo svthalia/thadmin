@@ -4,15 +4,21 @@
       <p>Logged in</p>
     </div>
     <div v-else>
-      <p>Not logged in</p>
+      <form @submit.prevent="submit">
+        <input type="text" v-model="username"/>
+        <input type="password" v-model="password"/>
+        <button type="submit">
+          Submit From Vue Property
+        </button>
+      </form>
     </div>
     <div><p>laksdjflaksdjf</p></div>
   </div>
 </template>
 
 <script>
-  import { AuthService, AuthStatus } from "@/common/auth.service";
   import axios from "axios";
+  import { OAuthCredentials } from "@/common/token.service.ts";
 
   export default {
     name: 'SplashScreen',
@@ -21,13 +27,17 @@
     },
     data () {
       return {
-        info: null
+        username: "",
+        password: ""
+      }
+    },
+    methods: {
+      submit() {
       }
     },
     computed: {
       authenticated: function() {
-        console.log(AuthService.status);
-        return AuthService.status === AuthStatus.SIGNED_IN;
+        return true;
       },
     },
     mounted () {

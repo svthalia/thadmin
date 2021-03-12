@@ -1,4 +1,4 @@
-# thadmin2
+# typescript-app
 
 ## Project setup
 ```

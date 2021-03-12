@@ -1,8 +1,10 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <SplashScreen/>
+  <div id="nav">
+    <router-link to="/">Home</router-link> |
+    <router-link to="/about">About</router-link>
   </div>
+  <router-view />
+  <SplashScreen/>
 </template>
 
 <script>
@@ -26,3 +28,4 @@ export default {
   margin-top: 60px;
 }
 </style>
+
