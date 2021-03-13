@@ -17,6 +17,8 @@ interface OAuthAuthorizeData {
   refresh_token: string;
 }
 
+class AuthorizationError extends Error {}
+
 // eslint-disable-next-line @typescript-eslint/class-name-casing
 class _AuthService {
   authorizationUri: string;
@@ -79,36 +81,36 @@ class _AuthService {
     );
     OAuthCredentials.store();
   }
-  /*
-  async refreshTokens() {
-    const refreshToken = TokenService.getRefreshToken();
 
-    const requestData = {
+  async refreshTokens() {
+    const refreshToken: string | null = OAuthCredentials.getRefreshToken();
+    if (refreshToken === null) {
+      throw new AuthorizationError();
+    }
+    const response = await axios.request<OAuthAuthorizeData>({
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/x-www-form-urlencoded"
       },
       url: this.accessTokenUri,
-      data: JSON.stringify({
+      data: qs.stringify({
+        // eslint-disable-next-line @typescript-eslint/camelcase
         grant_type: "refresh_token",
-        refreshToken: refreshToken
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        refresh_token: refreshToken,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        client_id: this.clientId
       })
-    };
-
-    try {
-      const response = await ApiService.customRequest(requestData);
-
-      TokenService.setToken(response.data.access_token);
-      TokenService.setRefreshToken(response.data.refresh_token);
-
-      return response.data.access_token;
-    } catch (error) {
-      throw new AuthenticationError(
-        error.response.status,
-        error.response.data.error_description
-      );
-    }
-  }*/
+    });
+    OAuthCredentials.set(
+      response.data.access_token,
+      Date.now() + response.data.expires_in,
+      response.data.token_type,
+      response.data.scope.split(" "),
+      response.data.refresh_token
+    );
+    OAuthCredentials.store();
+  }
 
   signOut() {
     OAuthCredentials.removeToken();
