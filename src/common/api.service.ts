@@ -182,7 +182,7 @@ class _ApiService {
     });
   }
 
-  customRequest(data: AxiosRequestConrfig) {
+  customRequest(data: AxiosRequestConfig) {
     return axios(data);
   }
 }
