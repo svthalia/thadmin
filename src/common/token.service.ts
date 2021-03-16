@@ -17,7 +17,7 @@ class _OAuthCredentials {
   }
 
   getAccessToken(): string | null {
-    if (this.credentials === null) {
+    if (this.credentials === null || Date.now() >= this.credentials.expires) {
       return null;
     } else {
       return this.credentials.accessToken;

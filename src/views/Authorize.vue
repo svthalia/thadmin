@@ -6,7 +6,7 @@
 </template>
 
 <script type="ts">
-import { AuthService } from "@/common/auth.service";
+import ApiService from "@/common/api.service";
 
 export default {
   name: 'AuthorizationScreen',
@@ -14,11 +14,11 @@ export default {
     autorize() {
       let url = new URL(window.location.href);
       let code = url.searchParams.get("code");
-      AuthService.requestAuthorizationToken(code).then(() => {
+      ApiService.requestAuthorizationToken(code).then(() => {
           window.location.href = "/";
       }).catch(() => {
         alert("Authorization failed, please try again...");
-        window.location.href = "/login";
+        window.location.href = "/";
       });
     }
   },

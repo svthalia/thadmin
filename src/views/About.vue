@@ -5,17 +5,12 @@
 </template>
 
 <script type="ts">
-import { AuthService } from "@/common/auth.service";
-
 export default {
   name: 'About ',
   methods: {
-    refresh() {
-      AuthService.refreshTokens();
-    }
+
   },
   mounted () {
-    this.refresh();
   }
 }
 </script>

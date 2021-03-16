@@ -12,22 +12,22 @@
 </template>
 
 <script>
-import { AuthService } from "@/common/auth.service";
+import ApiService from "@/common/api.service";
 
 export default {
   name: 'Authorization',
   methods: {
     logout() {
-      AuthService.logOut();
+      ApiService.logOut();
       window.location.reload();
     },
     login() {
-      AuthService.authorize();
+      window.location.href = ApiService.getAuthorizeRedirectURL();
     }
   },
   computed: {
     authenticated: function() {
-      return AuthService.loggedIn();
+      return ApiService.loggedIn();
     },
   },
 }
