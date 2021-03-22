@@ -18,7 +18,7 @@ export default {
   name: 'Authorization',
   data() {
     return {
-      authenticated: false,
+      authenticated: ApiService.loggedIn(),
     }
   },
   methods: {
@@ -31,7 +31,6 @@ export default {
     }
   },
   mounted() {
-    ApiService.loggedIn().then((result) => {this.authenticated = result}).catch(() => {this.authenticated = false});
   },
 }
 </script>

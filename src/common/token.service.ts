@@ -1,11 +1,11 @@
 const OAUTH_TOKEN_KEY = "oauth_token";
+const STATE_KEY = "state";
 
 interface Credentials {
   accessToken: string;
   expires: number;
   tokenType: string;
   scope: string[];
-  refreshToken: string;
 }
 
 class TokenExpiredError extends Error {}
@@ -37,12 +37,20 @@ class _OAuthCredentials {
     }
   }
 
-  getRefreshToken(): string {
-    if (this.credentials === null) {
-      throw new NoCredentialsError();
-    } else {
-      return this.credentials.refreshToken;
-    }
+  newRandomState(): string {
+    const rand = Math.random()
+      .toString()
+      .substr(2, 8);
+    window.localStorage.setItem(STATE_KEY, rand);
+    return rand;
+  }
+
+  getState(): string | null {
+    return window.localStorage.getItem(STATE_KEY);
+  }
+
+  removeState(): void {
+    window.localStorage.removeItem(STATE_KEY);
   }
 
   expired(): boolean {
@@ -65,15 +73,13 @@ class _OAuthCredentials {
     accessToken: string,
     expires: number,
     tokenType: string,
-    scope: string[],
-    refreshToken: string
+    scope: string[]
   ) {
     this.credentials = {
       accessToken: accessToken,
       expires: expires,
       tokenType: tokenType,
-      scope: scope,
-      refreshToken: refreshToken
+      scope: scope
     };
   }
 
