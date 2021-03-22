@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
+import Shift from "../views/Shift.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,7 +13,13 @@ const routes: Array<RouteRecordRaw> = [
     name: "OAuth Authorization",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Authorize.vue")
-  }
+  },
+  {
+    path: "/shift/:shiftId",
+    name: "Shift",
+    component: Shift,
+    props: true
+  },
 ];
 
 const router = createRouter({

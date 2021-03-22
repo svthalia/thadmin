@@ -23,7 +23,7 @@ export default {
       } catch (e) {
         alert("Authorization failed, please try again...");
       }
-      window.location.href = "/";
+      window.location.href = "/shift";
     }
   },
   mounted () {

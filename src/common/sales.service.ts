@@ -63,6 +63,14 @@ class SalesService {
     );
     return result.data;
   }
+
+  async newOrder(shift: number): Promise<Order> {
+    const result: AxiosResponse<Order> = await this.apiService.post(
+        `/sales/${shift}/orders/`, {}
+    );
+    return result.data;
+  }
+
 }
 
 export default SalesService;

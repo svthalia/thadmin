@@ -1,11 +1,9 @@
 <template>
   <div>
     <div v-if="authenticated">
-      <p>Logged in</p>
       <button @click="logout()">Log out</button>
     </div>
     <div v-else>
-      <p>Not logged in</p>
       <button @click="login()">Log in</button>
     </div>
   </div>
