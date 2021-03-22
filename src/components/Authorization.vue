@@ -16,6 +16,11 @@ import ApiService from "@/common/api.service";
 
 export default {
   name: 'Authorization',
+  data() {
+    return {
+      authenticated: false,
+    }
+  },
   methods: {
     logout() {
       ApiService.logOut();
@@ -25,10 +30,8 @@ export default {
       window.location.href = ApiService.getAuthorizeRedirectURL();
     }
   },
-  computed: {
-    authenticated: function() {
-      return ApiService.loggedIn();
-    },
+  mounted() {
+    ApiService.loggedIn().then((result) => {this.authenticated = result}).catch(() => {this.authenticated = false});
   },
 }
 </script>

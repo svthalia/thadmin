@@ -21,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "OAuth Authorization",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Authorize.vue")
+  },
+  {
+    path: "/shift",
+    name: "Shift",
+    component: () => import("../views/Shift.vue")
   }
 ];
 

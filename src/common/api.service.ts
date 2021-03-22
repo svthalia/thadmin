@@ -1,5 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { OAuthCredentials } from "@/common/token.service";
+import {
+  NoCredentialsError,
+  OAuthCredentials,
+  TokenExpiredError
+} from "@/common/token.service";
 import * as qs from "qs";
 
 interface OAuthAuthorizeData {
@@ -42,40 +46,24 @@ class _ApiService {
     return `${this.baseUri}${this.authorizationEndpoint}`;
   }
 
-  async getToken(): Promise<string> {
+  async getToken(): Promise<string | null> {
     try {
-      return this._getToken();
+      return OAuthCredentials.getAccessToken();
     } catch (e) {
-      if (e instanceof AuthorizationError) {
+      if (e instanceof TokenExpiredError) {
         return await this.refreshTokens().then(() => {
-          try {
-            return this._getToken();
-          } catch (e) {
-            if (e instanceof AuthorizationError) {
-              this.signOut();
-              throw new AuthorizationError();
-            } else {
-              throw e;
-            }
-          }
+          return OAuthCredentials._getAccessToken();
         });
+      } else if (e instanceof NoCredentialsError) {
+        throw e;
       } else {
         throw e;
       }
     }
   }
 
-  _getToken(): string {
-    const accessToken: string | null = OAuthCredentials.getAccessToken();
-    if (accessToken !== null) {
-      return accessToken;
-    } else {
-      throw new AuthorizationError();
-    }
-  }
-
-  loggedIn() {
-    return OAuthCredentials.getAccessToken() !== null;
+  async loggedIn(): Promise<boolean> {
+    return (await this.getToken()) !== null;
   }
 
   logOut() {
@@ -150,40 +138,40 @@ class _ApiService {
     OAuthCredentials.store();
   }
 
-  async get(resource: string) {
-    return axios.get(resource, {
+  async get<T>(resource: string): Promise<AxiosResponse<T>> {
+    return axios.get(`${this.baseUri}/api/v2${resource}`, {
       headers: {
         Authorization: `Bearer ${await this.getToken()}`
       }
     });
   }
 
-  async post(resource: string, data: object) {
-    return axios.post(resource, data, {
+  async post<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
+    return axios.post(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
         Authorization: `Bearer ${await this.getToken()}`
       }
     });
   }
 
-  async put(resource: string, data: object) {
-    return axios.put(resource, data, {
+  async put<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
+    return axios.put(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
         Authorization: `Bearer ${await this.getToken()}`
       }
     });
   }
 
-  async delete(resource: string) {
-    return axios.delete(resource, {
+  async delete<T>(resource: string): Promise<AxiosResponse<T>> {
+    return axios.delete(`${this.baseUri}/api/v2${resource}`, {
       headers: {
         Authorization: `Bearer ${await this.getToken()}`
       }
     });
   }
 
-  customRequest(data: AxiosRequestConfig) {
-    return axios(data);
+  customRequest<T>(data: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    return axios.request(data);
   }
 }
 

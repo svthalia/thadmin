@@ -8,6 +8,9 @@ interface Credentials {
   refreshToken: string;
 }
 
+class TokenExpiredError extends Error {}
+class NoCredentialsError extends Error {}
+
 // eslint-disable-next-line @typescript-eslint/class-name-casing
 class _OAuthCredentials {
   private credentials: Credentials | null;
@@ -16,17 +19,27 @@ class _OAuthCredentials {
     this.credentials = credentials;
   }
 
-  getAccessToken(): string | null {
-    if (this.credentials === null || Date.now() >= this.credentials.expires) {
+  _getAccessToken(): string | null {
+    if (this.credentials === null) {
       return null;
     } else {
       return this.credentials.accessToken;
     }
   }
 
-  getRefreshToken(): string | null {
+  getAccessToken(): string {
     if (this.credentials === null) {
-      return null;
+      throw new NoCredentialsError();
+    } else if (this.credentials.expires < Date.now()) {
+      throw new TokenExpiredError();
+    } else {
+      return this.credentials.accessToken;
+    }
+  }
+
+  getRefreshToken(): string {
+    if (this.credentials === null) {
+      throw new NoCredentialsError();
     } else {
       return this.credentials.refreshToken;
     }
@@ -34,7 +47,7 @@ class _OAuthCredentials {
 
   expired(): boolean {
     if (this.credentials === null) {
-      return true;
+      throw new NoCredentialsError();
     } else {
       return Date.now() >= this.credentials.expires;
     }
@@ -80,4 +93,4 @@ class _OAuthCredentials {
 
 const OAuthCredentials: _OAuthCredentials = _OAuthCredentials.retrieve();
 
-export { OAuthCredentials };
+export { OAuthCredentials, TokenExpiredError, NoCredentialsError };
