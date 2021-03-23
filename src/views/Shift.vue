@@ -1,11 +1,13 @@
 <template>
   <div v-if="shift">
     <div class="row">
-      <div class="products">
-        <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
-        <div id="dev-controls">
-          <button v-on:click="nextOrder">Create next order</button>
-          <button v-on:click="updateCurrentOrder">Update current order</button>
+      <div class="products-wrapper">
+        <div class="products">
+          <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
+          <div id="dev-controls">
+            <button v-on:click="nextOrder">Create next order</button>
+            <button v-on:click="updateCurrentOrder">Update current order</button>
+          </div>
         </div>
       </div>
       <OrderCard class="order-card" v-bind:order="order"></OrderCard>
@@ -58,24 +60,42 @@ export default {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
   grid-template-areas:
-    "left right";
+    "products ordercard";
   z-index: 1;
 }
 
+.products-wrapper {
+  grid-area: products;
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
 .products {
-  grid-area: left;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;
-  height: calc(100% - 50px);
-  width: calc(100% - 50px);
+  display: grid;
   margin: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px 15px;
+  justify-items: start;
+  align-items: start;
+  align-content: start;
 }
 
 .order-card {
-  grid-area: right;
+  grid-area: ordercard;
+  margin: 15px;
+}
+
+@media only screen and (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr;
+    grid-template-rows: 65vh max-content;
+    grid-template-areas:
+    "ordercard"
+    "products";
+  }
+  .products-wrapper {
+    max-height: 35vh;
+  }
 }
 
 </style>

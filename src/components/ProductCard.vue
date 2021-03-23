@@ -52,17 +52,13 @@ export default {
   position: relative;
   background-color: #FFFFFF;
   height: auto;
-  width: 30%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   padding: 10px;
-  margin: 10px;
   display: inline-block;
 }
-.product-card:before {
-  content: "";
-  float: left;
-  padding-top: 100%; 	/* initial ratio of 1:1*/
-}
+
 
 .title {
   font-family: 'Oswald', sans-serif;

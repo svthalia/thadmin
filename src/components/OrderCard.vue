@@ -1,29 +1,30 @@
 <template>
   <div class="order-card" v-if="order">
-    <div class="order-card-header">
-      <p class="order-summary">
-        <span class="order-description">{{order.order.order_description}}</span> - <span class="payment-amount">€{{order.order.payment_amount}}</span>
-      </p>
-      <p class="order-details" v-if="order.order.pk">Order {{ order.order.pk }}</p>
+      <div class="order-card-header">
+        <p class="order-summary">
+          <span class="order-description">{{order._o.order_description}}</span> - <span class="payment-amount">€{{order._o.payment_amount}}</span>
+        </p>
+        <p class="order-details" v-if="order._o.pk">Order {{ order._o.pk }}</p>
+      </div>
+
+      <div class="order-card-center">
+        <div class="payment-info" v-if="order._o.payment">
+          <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
+        </div>
+
+        <qrcode-vue class="qr-code" v-else-if="order._o.payment_url" v-bind:value="order._o.payment_url" v-bind:size="1024" renderAs="svg" level="M" />
+
+        <button class="order-sync" v-else v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
+      </div>
+
+      <div class="order-card-footer">
+        <p v-if="!order._o.payment">OR REGISTER A</p>
+        <p v-if="!order._o.payment">
+          <button class="cash-payment"><i class="fas fa-coins"></i> Cash payment</button>
+          <button class="card-payment"><i class="fas fa-credit-card"></i> Card payment</button>
+        </p>
+      </div>
     </div>
-
-    <div class="payment-info" v-if="order.order.payment">
-      <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
-    </div>
-
-    <qrcode-vue class="qr-code" v-else-if="order.order.payment_url" v-bind:value="order.order.payment_url" v-bind:size="300" level="H" />
-
-    <button class="order-sync" v-else v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
-
-
-    <div class="order-card-footer">
-      <p v-if="!order.order.payment">OR REGISTER A</p>
-      <p v-if="!order.order.payment">
-        <button class="cash-payment"><i class="fas fa-coins"></i> Cash payment</button>
-        <button class="card-payment"><i class="fas fa-credit-card"></i> Card payment</button>
-      </p>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -51,25 +52,30 @@ export default {
 .order-card {
   position: relative;
   background-color: #FFFFFF;
-  height: calc(100% - 50px);
-  width: calc(100% - 50px);
   overflow: hidden;
   padding: 20px;
-  margin: 25px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.order-card-header, .order-card-footer {
-  height: 100px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 4fr 1fr;
+  gap: 10px 0;
+  grid-template-areas:
+    "header"
+    "center"
+    "footer";
+  justify-items: center;
+  align-items: center;
 }
 
 .order-card-header {
-
+  grid-area: header;
+  align-self: start;
 }
-
+.order-card-center {
+  grid-area: center;
+}
+.order-card-footer {
+  grid-area: footer;
+}
 
 p {
   font-family: 'Open Sans', sans-serif;
@@ -86,6 +92,12 @@ p {
   display:block;
   margin:auto;
   width: 80%;
+  height: 100%;
+}
+
+.qr-code canvas {
+  width: 100%;
+  height: 100%;
 }
 
 button {

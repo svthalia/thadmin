@@ -48,17 +48,17 @@ interface _Order {
 }
 
 class Order {
-  order: _Order;
+  _o: _Order;
 
   constructor(order: _Order) {
-    this.order = order;
+    this._o = order;
   }
 
   getOrderItem(product: Product) {
-    if (this.order.order_items == null) {
+    if (this._o.order_items == null) {
       return null;
     }
-    const item = this.order.order_items.filter(
+    const item = this._o.order_items.filter(
       item => item.product == product.name
     )[0];
     if (item == undefined) {
@@ -68,14 +68,14 @@ class Order {
   }
 
   plusProduct(product: Product) {
-    if (this.order.order_items == null) {
+    if (this._o.order_items == null) {
       const orderItem = {
         product: product.name,
         amount: 1,
         total: product.price
       };
       // eslint-disable-next-line @typescript-eslint/camelcase
-      this.order.order_items = [orderItem];
+      this._o.order_items = [orderItem];
     } else {
       let orderItem = this.getOrderItem(product);
       if (orderItem == null) {
@@ -84,7 +84,7 @@ class Order {
           amount: 1,
           total: product.price
         };
-        this.order.order_items.push(orderItem);
+        this._o.order_items.push(orderItem);
       } else {
         orderItem.amount++;
         orderItem.total = product.price * orderItem.amount;
@@ -93,7 +93,7 @@ class Order {
   }
 
   minusProduct(product: Product) {
-    if (this.order.order_items == null) {
+    if (this._o.order_items == null) {
       console.log("Deleting a non-existent product");
     } else {
       const orderItem = this.getOrderItem(product);
@@ -105,7 +105,7 @@ class Order {
           // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
           // @ts-ignore
           // eslint-disable-next-line @typescript-eslint/camelcase
-          this.order.order_items = this.order.order_items.filter(
+          this._o.order_items = this._o.order_items.filter(
             item => item.product !== product.name
           );
         }
@@ -115,7 +115,7 @@ class Order {
   }
 
   deleteProduct(product: Product) {
-    if (this.order.order_items == null) {
+    if (this._o.order_items == null) {
       console.log("Deleting a non-existent product");
     } else {
       const orderItem = this.getOrderItem(product);
@@ -125,7 +125,7 @@ class Order {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/camelcase
-        this.order.order_items = this.order.order_items.filter(
+        this._o.order_items = this._o.order_items.filter(
           item => item.product !== product.name
         );
       }
@@ -133,7 +133,7 @@ class Order {
   }
 
   productAmount(product: Product) {
-    if (this.order.order_items == null) {
+    if (this._o.order_items == null) {
       console.log("This product does not exist");
     } else {
       const orderItem = this.getOrderItem(product);
@@ -164,17 +164,23 @@ class SalesService {
 
   async updateOrder(order: Order): Promise<Order> {
     const result: AxiosResponse<_Order> = await this.apiService.put(
-      `/sales/order/${order.order.pk}/`,
-      order.order
+      `/sales/order/${order._o.pk}/`,
+      order._o
     );
-    order.order = result.data;
+    order._o = result.data;
     return order;
   }
 
-  async newOrder(shift: number): Promise<Order> {
+  async newOrder(shift: number, order: Order | null = null): Promise<Order> {
+    let data: {};
+    if (order == null) {
+      data = {};
+    } else {
+      data = order._o;
+    }
     const result: AxiosResponse<_Order> = await this.apiService.post(
       `/sales/${shift}/orders/`,
-      {}
+      data
     );
     return new Order(result.data);
   }
