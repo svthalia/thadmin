@@ -2,23 +2,23 @@
   <div class="order-card" v-if="order">
     <div class="order-card-header">
       <p class="order-summary">
-        <span class="order-description">{{order.order_description}}</span> - <span class="payment-amount">€{{order.payment_amount}}</span>
+        <span class="order-description">{{order.order.order_description}}</span> - <span class="payment-amount">€{{order.order.payment_amount}}</span>
       </p>
-      <p class="order-details" v-if="order.pk">Order {{ order.pk }}</p>
+      <p class="order-details" v-if="order.order.pk">Order {{ order.order.pk }}</p>
     </div>
 
-    <div class="payment-info" v-if="order.payment">
+    <div class="payment-info" v-if="order.order.payment">
       <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
     </div>
 
-<!--    <vue-qrcode class="qr-code" v-else-if="order.payment_url" v-bind:value="order.payment_url" />-->
+<!--    <vue-qrcode class="qr-code" v-else-if="order.order.payment_url" v-bind:value="order.order.payment_url" />-->
 
     <button class="order-sync" v-else v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
 
 
     <div class="order-card-footer">
-      <p v-if="!order.payment">OR REGISTER A</p>
-      <p v-if="!order.payment">
+      <p v-if="!order.order.payment">OR REGISTER A</p>
+      <p v-if="!order.order.payment">
         <button class="cash-payment"><i class="fas fa-coins"></i> Cash payment</button>
         <button class="card-payment"><i class="fas fa-credit-card"></i> Card payment</button>
       </p>
@@ -27,13 +27,14 @@
 </template>
 
 <script>
+import Order from '@/common/sales.service'
 // import VueQrcode from 'vue-qrcode';
 
 export default {
   name: 'OrderCard',
   // components: {VueQrcode},
   props: {
-    order: Object
+    order: Order
   },
   methods: {
     updateOrder: function () {

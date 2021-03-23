@@ -27,14 +27,14 @@ export default {
     shiftId: String,
   },
   methods: {
-    nextOrder: function () {
-      salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
+    nextOrder: async function () {
+      await salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
     },
     updateCurrentOrder: function () {
-      if (this.order === null) {
+      if (this.order == null) {
         salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
       }
-      salesService.getOrderDetails(this.order.id).then((order) => (this.order = order));
+      salesService.updateOrder(this.order).then((order) => (this.order = order));
     }
   },
   data () {

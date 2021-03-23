@@ -21,22 +21,26 @@ export default {
   },
   computed: {
     amount: function() {
-      // if (this.order) {return this.order.productAmount(this.product)}
-      // return 0;
+      if (this.order) {return this.order.productAmount(this.product)}
+      return 0;
     }
   },
   methods: {
     increment() {
-      // if (this.order === null || this.order === undefined){
-      //   this.order = this.$parent.nextOrder();
-      // }
-      // this.order.plusProduct(this.product)
+      if (this.order === null || this.order === undefined){
+        this.$parent.nextOrder().then(() => {
+          this.order.plusProduct(this.product);
+        });
+      }
+      else {
+        this.order.plusProduct(this.product);
+      }
     },
     decrement() {
-      // this.order.minusProduct(this.product)
+      this.order.minusProduct(this.product)
     },
     del() {
-      // this.order.deleteProduct(this.product)
+      this.order.deleteProduct(this.product)
     }
   }
 };
@@ -47,7 +51,7 @@ export default {
 .product-card {
   position: relative;
   background-color: #FFFFFF;
-  height: 200px;
+  height: auto;
   width: 30%;
   overflow: hidden;
   padding: 10px;
