@@ -3,7 +3,7 @@
     <div class="background"><div class="background-image"></div></div>
     <header>
       <Authorization class="auth"></Authorization>
-      <!--      <span class="clock">{{ currentTime }}</span>-->
+      <span class="clock">{{ currentTime }}</span>
     </header>
     <RouterView class="console" />
   </div>
