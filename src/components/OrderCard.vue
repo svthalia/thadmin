@@ -11,7 +11,7 @@
       <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
     </div>
 
-<!--    <vue-qrcode class="qr-code" v-else-if="order.order.payment_url" v-bind:value="order.order.payment_url" />-->
+    <qrcode-vue class="qr-code" v-else-if="order.order.payment_url" v-bind:value="order.order.payment_url" v-bind:size="300" level="H" />
 
     <button class="order-sync" v-else v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
 
@@ -28,11 +28,13 @@
 
 <script>
 import Order from '@/common/sales.service'
-// import VueQrcode from 'vue-qrcode';
+import QrcodeVue from 'qrcode.vue'
 
 export default {
   name: 'OrderCard',
-  // components: {VueQrcode},
+  components: {
+    QrcodeVue
+  },
   props: {
     order: Order
   },
