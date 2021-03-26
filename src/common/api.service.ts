@@ -36,9 +36,10 @@ class _ApiService {
     return OAuthCredentials.getAccessToken();
   }
 
-  loggedIn() {
+  loggedIn(): boolean {
     try {
-      return this.getToken() !== null;
+      this.getToken();
+      return true;
     } catch {
       return false;
     }

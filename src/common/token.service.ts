@@ -27,6 +27,15 @@ class _OAuthCredentials {
     }
   }
 
+  hasValidAccessToken(): boolean {
+    try {
+      this.getAccessToken();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   getAccessToken(): string {
     if (this.credentials === null) {
       throw new NoCredentialsError();
@@ -99,4 +108,4 @@ class _OAuthCredentials {
 
 const OAuthCredentials: _OAuthCredentials = _OAuthCredentials.retrieve();
 
-export { OAuthCredentials, TokenExpiredError, NoCredentialsError };
+export { OAuthCredentials, TokenExpiredError, NoCredentialsError, Credentials };
