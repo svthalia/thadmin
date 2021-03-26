@@ -4,13 +4,11 @@
       <div class="products-wrapper">
         <div class="products">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
-          <div id="dev-controls">
-            <button v-on:click="nextOrder">Create next order</button>
-            <button v-on:click="updateCurrentOrder">Update current order</button>
-          </div>
         </div>
       </div>
-      <OrderCard class="order-card" v-bind:order="order"></OrderCard>
+      <div class="card">
+        <OrderCard v-if="order" v-bind:order="order"></OrderCard>
+      </div>
     </div>
   </div>
 </template>
@@ -30,13 +28,21 @@ export default {
   },
   methods: {
     nextOrder: async function () {
-      await salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
+      await salesService.newOrder(parseInt(this.shiftId), null).then((order) => (this.order = order));
     },
-    updateCurrentOrder: function () {
+    updateCurrentOrder: async function () {
       if (this.order == null) {
-        salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
+        await salesService.newOrder(parseInt(this.shiftId)).then((order) => (this.order = order));
       }
-      salesService.updateOrder(this.order).then((order) => (this.order = order));
+      await salesService.updateOrder(this.order).then((order) => (this.order = order));
+    },
+    fetchOrderUpdates: async function() {
+      if (this.order != null && this.order.synced && !this.order._o.payment) {
+        await salesService.getOrderDetails(this.order._o.pk).then((order) => {if (this.order.synced){this.order = order}});
+      }
+    },
+    reset: function () {
+      this.order = null;
     }
   },
   data () {
@@ -47,6 +53,7 @@ export default {
   },
   mounted () {
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
+    setInterval(this.fetchOrderUpdates, 2000);
   },
 }
 </script>
@@ -66,6 +73,7 @@ export default {
 
 .products-wrapper {
   grid-area: products;
+  height: min-content;
   max-height: 100%;
   overflow-y: scroll;
 }
@@ -80,21 +88,21 @@ export default {
   align-content: start;
 }
 
-.order-card {
+.card {
   grid-area: ordercard;
+  max-height: 100%;
   margin: 15px;
+  background-color: #FFFFFF;
+  padding: 20px;
 }
 
 @media only screen and (max-width: 768px) {
   .row {
     grid-template-columns: 1fr;
-    grid-template-rows: 65vh max-content;
+    grid-template-rows: 1fr minmax(min-content, 35vh);
     grid-template-areas:
     "ordercard"
     "products";
-  }
-  .products-wrapper {
-    max-height: 35vh;
   }
 }
 

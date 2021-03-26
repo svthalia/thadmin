@@ -11,7 +11,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/auth/callback",
     name: "OAuth Authorization",
-    component: () => import(/* webpackChunkName: "about" */ "../views/Authorize.vue")
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Authorize.vue")
   },
   {
     path: "/shift/:shiftId",

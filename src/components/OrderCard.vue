@@ -1,6 +1,6 @@
 <template>
   <div class="order-card" v-if="order">
-      <div class="order-card-header">
+      <div class="order-card-header" v-bind:class="{ blurred: needsSync() }">
         <p class="order-summary">
           <span class="order-description">{{order._o.order_description}}</span> - <span class="payment-amount">€{{order._o.payment_amount}}</span>
         </p>
@@ -10,14 +10,15 @@
       <div class="order-card-center">
         <div class="payment-info" v-if="order._o.payment">
           <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
+          <button class="done" v-on:click="done">Done</button>
         </div>
 
-        <qrcode-vue class="qr-code" v-else-if="order._o.payment_url" v-bind:value="order._o.payment_url" v-bind:size="1024" renderAs="svg" level="M" />
+        <qrcode-vue class="qr-code" v-bind:class="{ blurred: needsSync() }" v-else-if="order._o.payment_url" v-bind:value="order._o.payment_url" v-bind:size="1024" renderAs="svg" level="M" />
 
-        <button class="order-sync" v-else v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
+        <button class="order-sync" v-if="!order._o.payment && needsSync()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
 
-      <div class="order-card-footer">
+      <div class="order-card-footer" v-bind:class="{ blurred: needsSync() }">
         <p v-if="!order._o.payment">OR REGISTER A</p>
         <p v-if="!order._o.payment">
           <button class="cash-payment"><i class="fas fa-coins"></i> Cash payment</button>
@@ -37,12 +38,22 @@ export default {
     QrcodeVue
   },
   props: {
-    order: Order
+    order: Order | null
   },
   methods: {
+    done: function () {
+      this.$parent.reset();
+    },
     updateOrder: function () {
       this.$parent.updateCurrentOrder();
+    },
+    needsSync: function () {
+      return !this.order.synced;
+    },
+    paymentInfo: function () {
+
     }
+
   }
 }
 </script>
@@ -50,10 +61,6 @@ export default {
 <style scoped>
 
 .order-card {
-  position: relative;
-  background-color: #FFFFFF;
-  overflow: hidden;
-  padding: 20px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 4fr 1fr;
@@ -64,6 +71,8 @@ export default {
     "footer";
   justify-items: center;
   align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 .order-card-header {
@@ -72,6 +81,13 @@ export default {
 }
 .order-card-center {
   grid-area: center;
+  width: 100%;
+  min-width: 100px;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .order-card-footer {
   grid-area: footer;
@@ -88,19 +104,32 @@ p {
   font-size: 12px;
 }
 
-.qr-code, .payer-img {
+.qr-code, .payer-img, .payment-info {
   display:block;
-  margin:auto;
-  width: 80%;
-  height: 100%;
+  position: absolute;
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 100px;
+  min-width: 100px;
 }
 
+
 .qr-code canvas {
-  width: 100%;
-  height: 100%;
+  position: relative;
+  aspect-ratio: 1/1;
+}
+
+.order-sync {
+  position: relative;
+  display: block;
+  margin: auto;
+  width: 100px;
+  height: 100px;;
 }
 
 button {
+  position: relative;
+  display: inline-block;
   font-family: 'Oswald', sans-serif;
   text-transform: uppercase;
   font-size: 20px;
@@ -110,6 +139,10 @@ button {
   border: none;
   border-radius: 0;
   margin: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  width: fit-content;
 }
 
 button:focus {
@@ -122,4 +155,14 @@ button:active {
   border-radius: 0;
   outline: 0;
 }
+
+.blurred {
+  filter: blur(5px);
+  transition: all 0.5s ease;
+}
+
+.qr-code.blurred {
+  filter: blur(15px);
+}
+
 </style>

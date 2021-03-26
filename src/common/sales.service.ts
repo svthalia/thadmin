@@ -49,9 +49,18 @@ interface _Order {
 
 class Order {
   _o: _Order;
+  __o: _Order;
+  synced: boolean;
 
   constructor(order: _Order) {
-    this._o = order;
+    this.__o = order;
+    this._o = { ...order };
+    this.synced = true;
+  }
+
+  getAPIDataDiff() {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return { order_items: this._o.order_items };
   }
 
   getOrderItem(product: Product) {
@@ -68,6 +77,7 @@ class Order {
   }
 
   plusProduct(product: Product) {
+    this.synced = false;
     if (this._o.order_items == null) {
       const orderItem = {
         product: product.name,
@@ -100,6 +110,7 @@ class Order {
       if (orderItem == null) {
         console.log("Deleting a non-existent product");
       } else {
+        this.synced = false;
         orderItem.amount--;
         if (orderItem.amount == 0) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -122,6 +133,7 @@ class Order {
       if (orderItem == null) {
         console.log("Deleting a non-existent product");
       } else {
+        this.synced = false;
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/camelcase
@@ -165,9 +177,12 @@ class SalesService {
   async updateOrder(order: Order): Promise<Order> {
     const result: AxiosResponse<_Order> = await this.apiService.put(
       `/sales/order/${order._o.pk}/`,
-      order._o
+      order.getAPIDataDiff() as {}
     );
-    order._o = result.data;
+    order.synced = true;
+    order.__o = result.data;
+    order._o = { ...result.data };
+    order.synced = true;
     return order;
   }
 
@@ -176,12 +191,17 @@ class SalesService {
     if (order == null) {
       data = {};
     } else {
-      data = order._o;
+      data = order.getAPIDataDiff();
     }
     const result: AxiosResponse<_Order> = await this.apiService.post(
       `/sales/${shift}/orders/`,
       data
     );
+    if (order != null) {
+      order._o = result.data;
+      order.__o = { ...result.data };
+      return order;
+    }
     return new Order(result.data);
   }
 }

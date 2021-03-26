@@ -30,6 +30,7 @@ export default {
       if (this.order === null || this.order === undefined){
         this.$parent.nextOrder().then(() => {
           this.order.plusProduct(this.product);
+          this.$parent.updateCurrentOrder();
         });
       }
       else {

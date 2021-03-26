@@ -3,7 +3,7 @@
     <div class="background"><div class="background-image"></div></div>
     <header>
       <Authorization class="auth"></Authorization>
-      <!--      <span class="clock">{{ currentTime }}</span>-->
+      <span class="clock">{{ currentTime }}</span>
     </header>
     <RouterView class="console" />
   </div>
@@ -24,13 +24,13 @@ export default {
     };
   },
   methods: {
-    // time() {
-    //   this.currentTime = moment().format("HH:mm:ss");
-    //   setInterval(this.time, 1000);
-    // }
+    time() {
+      this.currentTime = moment().format("HH:mm:ss");
+    }
   },
   mounted: function() {
-    // this.time();
+    this.time();
+    setInterval(this.time, 100);
   }
 };
 </script>
