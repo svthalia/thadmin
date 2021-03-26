@@ -11,7 +11,7 @@ import store from "@/store";
 export default {
   name: 'AuthorizationScreen',
   methods: {
-    async autorize() {
+    async authorize() {
       try {
         const url = new URL(window.location);
         let hash_params = url.hash.replace("#", "").split("&");
@@ -19,7 +19,7 @@ export default {
         hash_params.forEach((item) => {
           hash_params_dict[item.split(/=(.+)/)[0]] = item.split(/=(.+)/)[1]
         });
-        await store.dispatch("User/login", hash_params_dict["state"], hash_params_dict["access_token"], hash_params_dict["expires_in"], hash_params_dict["tokenType"], decodeURIComponent(hash_params_dict["scope"]).split(":")).then(loggedIn => {
+        await store.dispatch("User/login", hash_params_dict["state"] === undefined ? null : hash_params_dict["state"], hash_params_dict["access_token"], hash_params_dict["expires_in"], hash_params_dict["tokenType"], decodeURIComponent(hash_params_dict["scope"]).split(":")).then(loggedIn => {
           if (!loggedIn) {
             alert("State token did not match, please try again...");
           }
@@ -34,7 +34,7 @@ export default {
     }
   },
   mounted () {
-      this.autorize();
+      this.authorize();
     }
   }
 </script>
