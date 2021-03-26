@@ -6,7 +6,7 @@
         Login to Thadmin2 via a Thalia Account. Note that you require Thalia Pay access rights to login to this service.
       </p>
       <a href="#" class="btn btn-primary d-block" @click="startLogin">
-        Login with 
+        Login with
         <svg width="374px" height="375px" viewBox="0 0 374 375" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="d-inline-block w-auto">
         <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
         <title>logo-t</title>

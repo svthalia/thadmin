@@ -1,4 +1,3 @@
-import { Credentials, NoCredentialsError } from "@/common/token.service";
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 const TOKEN_KEY = "credentials";
@@ -7,8 +6,15 @@ const OAUTH_STATE_KEY = "oauth_state";
 const savedCredentials = localStorage.getItem(TOKEN_KEY);
 const savedStateKey = localStorage.getItem(OAUTH_STATE_KEY);
 
+interface Credentials {
+  accessToken: string;
+  expires: number;
+  tokenType: string;
+  scope: string[];
+}
+
 @Module({ namespaced: true })
-class AuthModule extends VuexModule {
+class UserModule extends VuexModule {
   private credentials: Credentials | null = savedCredentials
     ? JSON.parse(savedCredentials)
     : null;
@@ -30,23 +36,10 @@ class AuthModule extends VuexModule {
 
   get expired(): boolean {
     if (this.credentials === null) {
-      throw new NoCredentialsError();
+      return true;
     } else {
       return Date.now() >= this.credentials.expires;
     }
-  }
-
-  get authorizeRedirectURL(): string {
-    const redirectURL = new URL("http://localhost:8000/user/oauth/authorize/");
-    redirectURL.searchParams.append(
-      "client_id",
-      "0L5puPQdSfLS2X7tb1zglMVDjYUWKJJB9shTqCtQ"
-    );
-    redirectURL.searchParams.append("response_type", "token");
-    if (this.stateKey !== null) {
-      redirectURL.searchParams.append("state", this.stateKey);
-    }
-    return redirectURL.href;
   }
 
   @Action
@@ -94,8 +87,6 @@ class AuthModule extends VuexModule {
     tokenType: string,
     scope: string[]
   ): boolean {
-    console.log(this.stateKey);
-    console.log(stateKey);
     if (this.stateKey === stateKey) {
       this.context.commit("setCredentials", {
         accessToken,
@@ -125,4 +116,4 @@ class AuthModule extends VuexModule {
   }
 }
 
-export default AuthModule;
+export default UserModule;
