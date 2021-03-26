@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/Home.vue";
 import Shift from "../views/Shift.vue";
+import Shifts from "../views/Shifts.vue";
+import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -9,22 +11,51 @@ const routes: Array<RouteRecordRaw> = [
     component: Home
   },
   {
-    path: "/auth/callback",
-    name: "OAuth Authorization",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Authorize.vue")
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue")
   },
   {
-    path: "/shift/:shiftId",
+    path: "/auth/callback",
+    name: "OAuth Authorization",
+    component: () => import("../views/Authorize.vue")
+  },
+  {
+    path: "/shifts/:shiftId",
     name: "Shift",
     component: Shift,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/shifts",
+    name: "Shift",
+    component: Shifts,
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters["auth/isLoggedIn"]) {
+      next({
+        name: "Home"
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
