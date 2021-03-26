@@ -30,6 +30,7 @@
 
 <script type="ts">
 import store from "@/store";
+import ApiService from "@/common/api.service";
 
 export default {
   name: 'Login',
@@ -37,12 +38,9 @@ export default {
     async startLogin() {
       await store.dispatch("User/newRandomState");
       await store.dispatch("User/store");
-      window.location.href = store.getters["User/authorizeRedirectURL"];
+      window.location.href = ApiService.getAuthorizeRedirectURL();
     }
   },
-  mounted () {
-
-    }
   }
 </script>
 

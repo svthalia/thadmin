@@ -36,7 +36,9 @@ class _ApiService {
     const redirectURL = new URL(this.getAuthorizationUri());
     redirectURL.searchParams.append("client_id", this.clientId);
     redirectURL.searchParams.append("response_type", "token");
-    redirectURL.searchParams.append("state", store.state.stateKey);
+    if (store.state.User.stateKey !== null) {
+      redirectURL.searchParams.append("state", store.state.User.stateKey);
+    }
     return redirectURL.href;
   }
 

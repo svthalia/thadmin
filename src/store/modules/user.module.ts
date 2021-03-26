@@ -81,13 +81,13 @@ class UserModule extends VuexModule {
 
   @Action
   login(
-    stateKey: string,
+    stateKey: string | null,
     accessToken: string,
     expires: number,
     tokenType: string,
     scope: string[]
   ): boolean {
-    if (this.stateKey === stateKey) {
+    if (stateKey === null || this.stateKey === stateKey) {
       this.context.commit("setCredentials", {
         accessToken,
         expires,
