@@ -12,7 +12,9 @@ export default {
 
   },
   data () {
+    return {
 
+    }
   },
   mounted () {
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));

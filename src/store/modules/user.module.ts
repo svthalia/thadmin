@@ -1,17 +1,12 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
+import Credentials from "@/models/credentials.model";
+import { Commit } from "vuex";
 
 const TOKEN_KEY = "credentials";
 const OAUTH_STATE_KEY = "oauth_state";
 
 const savedCredentials = localStorage.getItem(TOKEN_KEY);
 const savedStateKey = localStorage.getItem(OAUTH_STATE_KEY);
-
-interface Credentials {
-  accessToken: string;
-  expires: number;
-  tokenType: string;
-  scope: string[];
-}
 
 @Module({ namespaced: true })
 class UserModule extends VuexModule {
@@ -31,15 +26,7 @@ class UserModule extends VuexModule {
   }
 
   get isLoggedIn(): boolean {
-    return this.accessToken !== null;
-  }
-
-  get expired(): boolean {
-    if (this.credentials === null) {
-      return true;
-    } else {
-      return Date.now() >= this.credentials.expires;
-    }
+    return this.credentials !== null && this.credentials.expires >= Date.now();
   }
 
   @Action
@@ -80,13 +67,14 @@ class UserModule extends VuexModule {
   }
 
   @Action
-  login(
-    stateKey: string | null,
-    accessToken: string,
-    expires: number,
-    tokenType: string,
-    scope: string[]
-  ): boolean {
+  login(payload: {
+    stateKey: string | null;
+    accessToken: string;
+    expires: number;
+    tokenType: string;
+    scope: string[];
+  }): boolean {
+    const { stateKey, accessToken, expires, tokenType, scope } = payload;
     if (stateKey === null || this.stateKey === stateKey) {
       this.context.commit("setCredentials", {
         accessToken,
@@ -101,13 +89,15 @@ class UserModule extends VuexModule {
   }
 
   @Mutation
-  public setCredentials(
-    accessToken: string,
-    expires: number,
-    tokenType: string,
-    scope: string[]
-  ) {
+  public setCredentials(payload: {
+    accessToken: string;
+    expires: number;
+    tokenType: string;
+    scope: string[];
+  }) {
+    const { accessToken, expires, tokenType, scope } = payload;
     this.credentials = {
+      ...this.credentials,
       accessToken: accessToken,
       expires: expires,
       tokenType: tokenType,

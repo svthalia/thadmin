@@ -51,6 +51,8 @@ export default {
       order: null,
     }
   },
+  created() {
+  },
   mounted () {
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
     setInterval(this.fetchOrderUpdates, 2000);

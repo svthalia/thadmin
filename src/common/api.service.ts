@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import store from "@/store";
+import { mapGetters } from "vuex";
 
 interface OAuthAuthorizeData {
   access_token: string;

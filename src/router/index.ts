@@ -22,7 +22,6 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/shifts/:shiftId",
-    name: "Shift",
     component: Shift,
     props: true,
     meta: {
@@ -31,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/shifts",
-    name: "Shift",
+    name: "Shifts",
     component: Shifts,
     meta: {
       requiresAuth: true
@@ -46,7 +45,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters["auth/isLoggedIn"]) {
+    if (!store.getters["User/isLoggedIn"]) {
       next({
         name: "Home"
       });
