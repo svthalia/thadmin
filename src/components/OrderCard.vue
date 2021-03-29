@@ -1,5 +1,5 @@
 <template>
-  <div class="card text-center mb-3" v-if="order">
+  <div class="card text-center mb-3 user-select-none" v-if="order">
       <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <span class="order-description">{{order._o.order_description}}</span> - <span class="payment-amount">€{{order._o.payment_amount}}</span>

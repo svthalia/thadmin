@@ -1,6 +1,6 @@
 <template>
   <div class="card m-1" style="cursor: pointer;" v-on:click="increment">
-    <div class="card-body">
+    <div class="card-body user-select-none">
       <div class="d-flex align-items-center">
         <h4 class="card-title flex-grow-0 mb-0">{{ product.name }}</h4>
         <p class="card-subtitle flex-grow-0 mr-auto ml-2" v-if="product.age_restricted"><i class="fas fa-id-card"></i></p>
