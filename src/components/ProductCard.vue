@@ -2,11 +2,10 @@
   <div class="card m-1" style="cursor: pointer;" v-on:click="increment">
     <div class="card-body user-select-none">
       <div class="d-flex align-items-center">
-        <h4 class="card-title flex-grow-0 mb-0">{{ product.name }}</h4>
-        <p class="card-subtitle flex-grow-0 mr-auto ml-2" v-if="product.age_restricted"><i class="fas fa-id-card"></i></p>
-        <span class="ml-3 flex-grow-0 amount" v-if="amount>0">{{ amount }}</span>
+        <h4 class="card-title flex-grow-0 mb-0 mr-auto">{{ product.name }}</h4>
+        <span class="flex-grow-0 amount" v-if="amount>0">{{ amount }}</span>
       </div>
-      <p class="price">€{{ product.price }}</p>
+      <p class="price">€{{ product.price }} <i v-if="product.age_restricted" class="fas fa-id-card"></i></p>
     </div>
     <div class="card-footer">
       <div class="d-flex flex-row justify-content-center align-items-center">
@@ -47,10 +46,10 @@ export default {
       }
     },
     decrement() {
-      this.order.minusProduct(this.product)
+      this.order.minusProduct(this.product);
     },
     del() {
-      this.order.deleteProduct(this.product)
+      this.order.deleteProduct(this.product);
     }
   }
 };

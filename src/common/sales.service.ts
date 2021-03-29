@@ -51,12 +51,12 @@ class Order {
     this.synced = true;
   }
 
-  getAPIDataDiff() {
+  public getAPIDataDiff(): { order_items: [OrderItem] | null } {
     // eslint-disable-next-line @typescript-eslint/camelcase
     return { order_items: this._o.order_items };
   }
 
-  getOrderItem(product: Product) {
+  public getOrderItem(product: Product): OrderItem | null {
     if (this._o.order_items == null) {
       return null;
     }
@@ -69,7 +69,7 @@ class Order {
     return item;
   }
 
-  plusProduct(product: Product) {
+  public plusProduct(product: Product): void {
     this.synced = false;
     if (this._o.order_items == null) {
       const orderItem = {
@@ -95,14 +95,10 @@ class Order {
     }
   }
 
-  minusProduct(product: Product) {
-    if (this._o.order_items == null) {
-      console.log("Deleting a non-existent product");
-    } else {
+  public minusProduct(product: Product): void {
+    if (this._o.order_items != null) {
       const orderItem = this.getOrderItem(product);
-      if (orderItem == null) {
-        console.log("Deleting a non-existent product");
-      } else {
+      if (orderItem != null) {
         this.synced = false;
         orderItem.amount--;
         if (orderItem.amount == 0) {
@@ -118,14 +114,10 @@ class Order {
     }
   }
 
-  deleteProduct(product: Product) {
-    if (this._o.order_items == null) {
-      console.log("Deleting a non-existent product");
-    } else {
+  public deleteProduct(product: Product): void {
+    if (this._o.order_items != null) {
       const orderItem = this.getOrderItem(product);
-      if (orderItem == null) {
-        console.log("Deleting a non-existent product");
-      } else {
+      if (orderItem != null) {
         this.synced = false;
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
@@ -137,9 +129,9 @@ class Order {
     }
   }
 
-  productAmount(product: Product) {
+  public productAmount(product: Product): number {
     if (this._o.order_items == null) {
-      console.log("This product does not exist");
+      return 0;
     } else {
       const orderItem = this.getOrderItem(product);
       if (orderItem == null) {
