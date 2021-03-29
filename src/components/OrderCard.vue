@@ -1,5 +1,5 @@
 <template>
-  <div class="card text-center" v-if="order">
+  <div class="card text-center mb-3" v-if="order">
       <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <span class="order-description">{{order._o.order_description}}</span> - <span class="payment-amount">€{{order._o.payment_amount}}</span>
@@ -12,7 +12,7 @@
             <button class="done" v-on:click="done">Done</button>
           </div>
 
-          <qrcode-vue class="qr-code p-3 h-auto mw-100" v-bind:class="{ blurred: needsSync() }" v-else-if="order._o.payment_url" v-bind:value="order._o.payment_url" v-bind:size="1024" renderAs="svg" level="M" />
+          <qrcode-vue class="qr-code p-3 h-auto" v-bind:class="{ blurred: needsSync() }" v-else-if="order._o.payment_url" v-bind:value="order._o.payment_url" v-bind:size="1024" renderAs="svg" level="M" />
         </div>
 
         <div class="card-footer" v-bind:class="{ blurred: needsSync() }">
@@ -75,7 +75,11 @@ p {
 
 .qr-code canvas {
   position: relative;
-  aspect-ratio: 1/1;
+}
+
+.qr-code {
+  max-width: 400px;
+  width: 100%;
 }
 
 .blurred {

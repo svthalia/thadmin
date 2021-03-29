@@ -1,12 +1,12 @@
 <template>
   <div v-if="shift" class="container mt-5">
     <div class="row flex-column-reverse flex-md-row">
-      <div class="products-wrapper col-md">
-        <div class="d-flex justify-content-start align-items-center flex-wrap">
+      <div class="products-wrapper col-md-8">
+        <div class="d-flex align-items-center flex-wrap" style="justify-content: space-between;">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
         </div>
       </div>
-      <div class="col-md">
+      <div class="col-md-4">
         <OrderCard v-if="order" v-bind:order="order"></OrderCard>
       </div>
     </div>
@@ -51,8 +51,6 @@ export default {
       order: null,
     }
   },
-  created() {
-  },
   mounted () {
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
     setInterval(this.fetchOrderUpdates, 2000);
@@ -67,16 +65,6 @@ export default {
   height: min-content;
   max-height: 100%;
   overflow-y: scroll;
-}
-
-.products {
-  display: grid;
-  margin: 15px;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 15px 15px;
-  justify-items: start;
-  align-items: start;
-  align-content: start;
 }
 
 </style>

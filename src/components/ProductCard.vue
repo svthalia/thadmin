@@ -58,10 +58,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
 @media screen and (max-width: 767px) {
   .card {
     font-size: 0.5rem;
-    max-width: calc(50% - 0.5rem - 20px);
+    max-width: calc(50% - 0.5rem);
+  }
+
+  .btn {
+    font-size: 0.5rem;
+    padding: 0.2rem 0.4rem;
   }
 }
 
@@ -69,41 +75,11 @@ p {
   font-family: 'Open Sans', sans-serif;
 }
 
-.buttons button {
-  padding: 8px;
-  width: 40px;
-  height: 40px;
-  color: white;
-  border: none;
-  border-radius: 0;
-  margin: 2px;
-}
-
-.buttons button:focus {
-  border: 1px solid #000000;
-  border-radius: 0;
-  outline: 0;
-}
-.buttons button:active {
-  border: 3px solid #000000;
-  border-radius: 0;
-  outline: 0;
-}
-
 .amount {
   color: #e62272;
-  font-size: 24pt;
+  font-size: 1.2rem;
   text-align: center;
   font-family: 'Oswald', sans-serif;
-}
-
-
-.product-card {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 </style>
