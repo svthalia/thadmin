@@ -1,21 +1,8 @@
 import ApiService from "@/common/api.service";
 import { AxiosResponse } from "axios";
-
-interface Product {
-  name: string;
-  price: number;
-  age_restricted: boolean;
-}
-
-interface Shift {
-  pk: number;
-  start_date: string;
-  end_date: string;
-  products: [Product];
-  total_revenue: number;
-  num_orders: number;
-  orders: string;
-}
+import Paginated from "@/models/paginated.model";
+import Product from "@/models/product.model";
+import Shift from "@/models/shift.model";
 
 interface OrderItem {
   product: string;
@@ -144,6 +131,13 @@ class Order {
 
 class SalesService {
   apiService = ApiService;
+
+  async getShifts(): Promise<[Shift]> {
+    const result: AxiosResponse<Paginated<Shift>> = await this.apiService.get(
+      `/sales/`
+    );
+    return result.data.results;
+  }
 
   async getShift(shift: number): Promise<Shift> {
     const result: AxiosResponse<Shift> = await this.apiService.get(

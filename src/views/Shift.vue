@@ -1,6 +1,11 @@
 <template>
-  <div v-if="shift" class="container mt-5">
-    <div class="row flex-column-reverse flex-md-row">
+  <div class="container mt-5">
+    <div class="row">
+      <router-link class="d-flex justify-content-center align-items-center" :to="{ name: 'Shifts' }">
+        <i class="fas fa-arrow-left"></i><span class="ml-1">All shifts</span>
+      </router-link>
+    </div>
+    <div class="row flex-column-reverse flex-md-row mt-1" v-if="shift">
       <div class="products-wrapper col-md-8">
         <div class="d-flex flex-wrap card-deck product-cards">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>

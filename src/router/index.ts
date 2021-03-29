@@ -22,6 +22,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/shifts/:shiftId",
+    name: "Shift",
     component: Shift,
     props: true,
     meta: {
