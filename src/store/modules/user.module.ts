@@ -1,6 +1,5 @@
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 import Credentials from "@/models/credentials.model";
-import { Commit } from "vuex";
 
 const TOKEN_KEY = "credentials";
 const OAUTH_STATE_KEY = "oauth_state";

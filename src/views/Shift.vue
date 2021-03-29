@@ -1,12 +1,12 @@
 <template>
-  <div v-if="shift">
-    <div class="row">
-      <div class="products-wrapper">
-        <div class="products">
+  <div v-if="shift" class="container mt-5">
+    <div class="row flex-column-reverse flex-md-row">
+      <div class="products-wrapper col-md">
+        <div class="d-flex justify-content-start align-items-center flex-wrap">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
         </div>
       </div>
-      <div class="card">
+      <div class="col-md">
         <OrderCard v-if="order" v-bind:order="order"></OrderCard>
       </div>
     </div>
@@ -62,17 +62,6 @@ export default {
 
 <style scoped>
 
-.row {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr;
-  grid-template-areas:
-    "products ordercard";
-  z-index: 1;
-}
-
 .products-wrapper {
   grid-area: products;
   height: min-content;
@@ -88,24 +77,6 @@ export default {
   justify-items: start;
   align-items: start;
   align-content: start;
-}
-
-.card {
-  grid-area: ordercard;
-  max-height: 100%;
-  margin: 15px;
-  background-color: #FFFFFF;
-  padding: 20px;
-}
-
-@media only screen and (max-width: 768px) {
-  .row {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr minmax(min-content, 35vh);
-    grid-template-areas:
-    "ordercard"
-    "products";
-  }
 }
 
 </style>

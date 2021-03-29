@@ -22,7 +22,7 @@ export default {
         await store.dispatch("User/login", {
           stateKey: hash_params_dict["state"] === undefined ? null : hash_params_dict["state"],
           accessToken: hash_params_dict["access_token"],
-          expires: Date.now() + hash_params_dict["expires_in"],
+          expires: Date.now() + (parseInt(hash_params_dict["expires_in"])*1000),
           tokenType: hash_params_dict["tokenType"],
           scope: decodeURIComponent(hash_params_dict["scope"]).split(":")}).then(loggedIn => {
           if (!loggedIn) {

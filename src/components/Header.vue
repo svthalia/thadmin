@@ -10,8 +10,8 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a v-if="authenticated" href="#" @click="logout">
-              Log out <i class="fas fa-sign-out-alt"></i>
+            <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
+              <span class="mr-1">Log out</span><i class="fas fa-sign-out-alt"></i>
             </a>
             <router-link v-else class="nav-link d-flex justify-content-center align-items-center" to="Login">
               <span class="mr-1">Log in</span><i class="fas fa-sign-in-alt"></i>

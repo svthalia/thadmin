@@ -1,13 +1,19 @@
 <template>
-  <div class="product-card" v-on:click="increment">
-    <h4 class="title">{{ product.name }}</h4>
-    <p class="price">€{{ product.price }}</p>
-    <p class="agerestricted" v-if="product.age_restricted">18+</p>
-    <span class="amount" v-if="amount>0">{{ amount }}</span>
-    <div class="buttons" v-on:click.stop>
-      <button class="trash" v-if="amount>0" v-on:click="del"><i class="fas fa-trash"></i></button>
-      <button class="minus" v-if="amount>0" v-on:click="decrement"><i class="fas fa-minus"></i></button>
-      <button class="plus" v-on:click="increment"><i class="fas fa-plus"></i></button>
+  <div class="card m-1" style="cursor: pointer;" v-on:click="increment">
+    <div class="card-body">
+      <div class="d-flex align-items-center">
+        <h4 class="card-title flex-grow-0 mb-0">{{ product.name }}</h4>
+        <p class="card-subtitle flex-grow-0 mr-auto ml-2" v-if="product.age_restricted"><i class="fas fa-id-card"></i></p>
+        <span class="ml-3 flex-grow-0 amount" v-if="amount>0">{{ amount }}</span>
+      </div>
+      <p class="price">€{{ product.price }}</p>
+    </div>
+    <div class="card-footer">
+      <div class="d-flex flex-row justify-content-center align-items-center">
+        <button v-on:click.stop class="btn btn-danger mx-1 text-white" :class="{ 'disabled': amount<=0 }" v-on="amount>0 ? { click: del } : {}"><i class="fas fa-trash"></i></button>
+        <button v-on:click.stop class="btn btn-warning mx-1 text-white" :class="{ 'disabled': amount<=0 }" v-on="amount>0 ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
+        <button v-on:click.stop class="btn btn-success mx-1 text-white" v-on:click="increment"><i class="fas fa-plus"></i></button>
+      </div>
     </div>
   </div>
 </template>
@@ -26,6 +32,9 @@ export default {
     }
   },
   methods: {
+    itemsInBasked: function() {
+      return this.amount > 0;
+    },
     increment() {
       if (this.order === null || this.order === undefined){
         this.$parent.nextOrder().then(() => {
@@ -49,32 +58,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.product-card {
-  position: relative;
-  background-color: #FFFFFF;
-  height: auto;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  padding: 10px;
-  display: inline-block;
-}
-
-
-.title {
-  font-family: 'Oswald', sans-serif;
-  text-transform: uppercase;
-  font-size: 30px;
+@media screen and (max-width: 767px) {
+  .card {
+    font-size: 0.5rem;
+    max-width: calc(50% - 0.5rem - 20px);
+  }
 }
 
 p {
   font-family: 'Open Sans', sans-serif;
-}
-
-.buttons {
-  right: 10px;
-  bottom: 10px;
-  position: absolute;
 }
 
 .buttons button {
@@ -99,46 +91,12 @@ p {
 }
 
 .amount {
-  background-color: #e62272;
-  font-size: 35px;
-  color: white;
-  right: 10px;
-  top: 10px;
-  position: absolute;
-  padding: 10px;
-  width: 60px;
-  height: 60px;
-  line-height: 1;
+  color: #e62272;
+  font-size: 24pt;
   text-align: center;
-}
-.amount {
   font-family: 'Oswald', sans-serif;
 }
 
-
-.trash {
-  background-color: red;
-}
-
-.trash:hover {
-  background-color: darkred;
-}
-
-
-.minus {
-  background-color: darkgrey;
-}
-.minus:hover {
-  background-color: grey;
-}
-
-
-.plus {
-  background-color: green;
-}
-.plus:hover {
-  background-color: darkgreen;
-}
 
 .product-card {
   -webkit-touch-callout: none; /* iOS Safari */
