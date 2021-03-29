@@ -2,7 +2,7 @@
   <div v-if="shift" class="container mt-5">
     <div class="row flex-column-reverse flex-md-row">
       <div class="products-wrapper col-md-8">
-        <div class="d-flex align-items-center flex-wrap" style="justify-content: space-between;">
+        <div class="d-flex flex-wrap card-deck product-cards">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
         </div>
       </div>
@@ -60,11 +60,14 @@ export default {
 
 <style scoped>
 
-.products-wrapper {
-  grid-area: products;
-  height: min-content;
-  max-height: 100%;
-  overflow-y: scroll;
+.product-cards {
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 767px) {
+  .product-cards {
+    justify-content: center;
+  }
 }
 
 </style>
