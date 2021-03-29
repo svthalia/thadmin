@@ -46,10 +46,10 @@ export default {
       }
     },
     decrement() {
-      this.order.minusProduct(this.product)
+      this.order.minusProduct(this.product);
     },
     del() {
-      this.order.deleteProduct(this.product)
+      this.order.deleteProduct(this.product);
     }
   }
 };
