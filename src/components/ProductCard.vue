@@ -2,10 +2,10 @@
   <div class="card m-1" style="cursor: pointer;" v-on:click="increment">
     <div class="card-body user-select-none">
       <div class="d-flex align-items-center">
-        <h4 class="card-title flex-grow-0 mb-0 mr-auto">{{ product.name }}</h4>
+        <h4 class="card-title flex-grow-0 mb-0 mr-auto font-oswald">{{ product.name }}</h4>
         <span class="flex-grow-0 amount" v-if="amount>0">{{ amount }}</span>
       </div>
-      <p class="price">€{{ product.price }} <i v-if="product.age_restricted" class="fas fa-id-card"></i></p>
+      <p class="price">€{{ product.price }} <span v-if="product.age_restricted">• 18+</span></p>
     </div>
     <div class="card-footer">
       <div class="d-flex flex-row justify-content-center align-items-center">
@@ -18,15 +18,18 @@
 </template>
 
 <script>
+import Order from "@/models/order.model";
+import Product from "@/models/product.model";
+
 export default {
   name: "ProductCard",
   props: {
-    product: null,
-    order: null,
+    product: Product,
+    order: Order,
   },
   computed: {
     amount: function() {
-      if (this.order) {return this.order.productAmount(this.product)}
+      if (this.order) {return this.order.productAmount(this.product);}
       return 0;
     }
   },
@@ -35,15 +38,7 @@ export default {
       return this.amount > 0;
     },
     increment() {
-      if (this.order === null || this.order === undefined){
-        this.$parent.nextOrder().then(() => {
-          this.order.plusProduct(this.product);
-          this.$parent.updateCurrentOrder();
-        });
-      }
-      else {
-        this.order.plusProduct(this.product);
-      }
+      this.order.plusProduct(this.product);
     },
     decrement() {
       this.order.minusProduct(this.product);

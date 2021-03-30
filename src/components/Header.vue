@@ -1,25 +1,20 @@
 <template>
-  <nav
-      class="navbar navbar-expand-md sticky-top site-header navbar-dark"
-  >
-    <div class="container">
-      <div class="navbar-brand">{{ currentTime }}</div>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
+  <nav class="navbar sticky-top site-header navbar-dark">
+    <div class="container pl-0 pr-0">
+      <div class="nav-link navbar-brand font-oswald pl-0 pr-0 mr-1">
+        <router-link :to="{ name: 'Shifts' }" class="font-weight-bold link-unstyled">Thadmin</router-link> • <span class="font-weight-light">{{ currentTime }}</span>
+      </div>
+      <ul class="navbar-nav">
           <li class="nav-item">
             <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
-              <span class="mr-1">Log out</span><i class="fas fa-sign-out-alt"></i>
+              <span class="mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
             </a>
             <router-link v-else class="nav-link d-flex justify-content-center align-items-center" to="Login">
-              <span class="mr-1">Log in</span><i class="fas fa-sign-in-alt"></i>
+              <i class="fas fa-sign-in-alt"></i>
             </router-link>
           </li>
         </ul>
       </div>
-    </div>
   </nav>
 </template>
 
@@ -32,7 +27,8 @@ export default {
   name: 'Authorization',
   data() {
     return {
-      currentTime: ""
+      currentTime: "",
+      username: "username",
     }
   },
   methods: {
@@ -61,5 +57,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

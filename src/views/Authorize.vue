@@ -1,6 +1,6 @@
 <template>
-  <div class="authorize">
-    <h1>Authorization in progress...</h1>
+  <div class="container authorize mt-3 text-center">
+    <h1 class="font-oswald">Authorization in progress...</h1>
     <p>You will be redirected shortly</p>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
       } catch (e) {
         alert("Authorization failed due to parsing error, please try again...");
       }
-      window.location.href = "/";
+      window.location.href = "/shifts";
     }
   },
   mounted () {

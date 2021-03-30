@@ -1,17 +1,9 @@
 <template>
   <div class="d-flex justify-content-center align-items-center mt-5">
-    <div class="login-container d-flex flex-column p-2">
-      <h1>Login</h1>
-      <p>
-        Login to Thadmin2 via a Thalia Account. Note that you require Thalia Pay access rights to login to this service.
-      </p>
-      <a href="#" class="btn btn-primary d-block" @click="startLogin">
+      <a href="#" class="login-btn btn btn-primary d-block" @click="startLogin">
         Login with
-        <svg width="374px" height="375px" viewBox="0 0 374 375" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="d-inline-block w-auto">
-        <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+        <svg width="20px" height="20px" viewBox="0 0 374 375" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="d-inline-block w-auto">
         <title>logo-t</title>
-        <desc>Created with Sketch.</desc>
-        <defs></defs>
         <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <g id="logo-t" transform="translate(-1.000000, 0.000000)" fill-rule="nonzero" fill="#ffffff">
             <path d="M196.929558,309.422964 C193.450765,306.717236 261.190596,373.104203 262.253561,373.973901 L196.929558,373.973901 C196.929558,373.973901 196.929558,309.422964 196.929558,309.422964 L196.929558,309.422964 Z" id="hoekje_onder_3_"></path>
@@ -24,7 +16,6 @@
           </g>
         </g>
       </svg></a>
-    </div>
   </div>
 </template>
 
@@ -45,23 +36,11 @@ export default {
 </script>
 
 <style>
-.login-container {
-  max-width: 400px;
-  width: 100%;
-  border: 1px solid #e62272;
-  border-radius: 3px;
-}
-
-.login-container svg {
-  max-height: 2vh;
-  color: black;
-}
-
 #logo-t {
   transition: color .15s ease-in-out;
 }
 
-.login-container a:hover #logo-t {
+.login-btn:hover * {
   fill: #e62272 !important;
 }
 </style>
