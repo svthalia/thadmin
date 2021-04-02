@@ -2,16 +2,19 @@
   <nav class="navbar sticky-top site-header navbar-dark">
     <div class="container pl-0 pr-0">
       <div class="nav-link navbar-brand font-oswald pl-0 pr-0 mr-1">
-        <router-link :to="{ name: 'Shifts' }" class="font-weight-bold link-unstyled">Thadmin</router-link> • <span class="font-weight-light">{{ currentTime }}</span>
+        <router-link v-if="authenticated" :to="{ name: 'Shifts' }" class="font-weight-bold link-unstyled">Thadmin</router-link>
+        <router-link v-else :to="{ name: 'Index' }" class="font-weight-bold link-unstyled">Thadmin</router-link>
+        • <span class="font-weight-light">{{ currentTime }}</span>
       </div>
       <ul class="navbar-nav">
           <li class="nav-item">
             <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
+              <img v-if="memberImageURL" :src="memberImageURL" alt="Member profile image" style="max-height: 1rem;" class="mr-1"/>
               <span class="font-oswald mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
             </a>
-            <router-link v-else class="nav-link d-flex justify-content-center align-items-center" to="Login">
+            <a v-else href="#" class="nav-link d-flex justify-content-center align-items-center" @click="startLogin">
               <i class="fas fa-sign-in-alt"></i>
-            </router-link>
+            </a>
           </li>
         </ul>
       </div>
@@ -20,8 +23,9 @@
 
 <script>
 import SalesService from "@/common/sales.service";
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import store from "@/store";
+import ApiService from "@/common/api.service";
 
 export default {
   name: 'Authorization',
@@ -29,6 +33,7 @@ export default {
     return {
       currentTime: "",
       username: "",
+      memberImageURL: null,
     }
   },
   methods: {
@@ -43,6 +48,11 @@ export default {
     },
     logout() {
       store.dispatch("User/logout");
+    },
+    async startLogin() {
+      await store.dispatch("User/newRandomState");
+      await store.dispatch("User/store");
+      window.location.href = ApiService.getAuthorizeRedirectURL();
     }
   },
   computed: {
@@ -50,13 +60,17 @@ export default {
       authenticated: "User/isLoggedIn"
     })
   },
-  mounted: function() {
+  mounted () {
     setInterval(this.time, 1000);
     if (this.authenticated) {
       let apiService = new SalesService();
-      apiService.getAuthorizedUserData().then(member => this.username = member.profile.short_display_name);
+      apiService.getAuthorizedUserData().then(member =>
+      {
+        this.username = member.profile.short_display_name;
+        this.memberImageURL = member.profile.photo.small;
+      });
     }
-  }
+  },
 }
 </script>
 

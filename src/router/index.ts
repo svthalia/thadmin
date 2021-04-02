@@ -1,26 +1,17 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Shift from "../views/Shift.vue";
 import Shifts from "../views/Shifts.vue";
+import Index from "../views/Index.vue";
 import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "Shifts",
-    component: Shifts,
+    name: "Index",
+    component: Index,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("../views/Login.vue")
-  },
-  {
-    path: "/auth/callback",
-    name: "OAuth Authorization",
-    component: () => import("../views/Authorize.vue")
   },
   {
     path: "/shifts/:shiftId",
@@ -30,6 +21,19 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: "/shifts",
+    name: "Shifts",
+    component: Shifts,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/auth/callback",
+    name: "OAuth Authorization",
+    component: () => import("../views/Authorize.vue")
   }
 ];
 
@@ -42,7 +46,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters["User/isLoggedIn"]) {
       next({
-        name: "Shifts"
+        name: "Index"
       });
     } else {
       next();

@@ -36,7 +36,7 @@ export default {
 }
 
 .background-container {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -49,6 +49,7 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   filter: blur(15px);
   transform: scale(1.1);
   z-index: -10;

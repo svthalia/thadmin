@@ -5,18 +5,25 @@
     <div v-if="shifts" class="mt-5 d-flex align-items-center">
       <ShiftCard v-for="shift in shifts" v-bind:shift="shift"></ShiftCard>
     </div>
+    <div v-else class="d-flex justify-content-center align-items-center">
+      <Loader size="60px" background-color="#000000"></Loader>
+    </div>
   </div>
 </template>
 
 <script>
 import SalesService from "@/common/sales.service";
 import ShiftCard from "@/components/ShiftCard";
+import Loader from "@/components/Loader";
 
 let salesService = new SalesService();
 
 export default {
   name: 'Shifts Overview',
-  components: {ShiftCard},
+  components: {
+    ShiftCard,
+    Loader,
+  },
   data () {
     return {
       shifts: null,

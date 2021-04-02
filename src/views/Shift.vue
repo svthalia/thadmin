@@ -13,6 +13,9 @@
         <OrderCard v-if="order" v-bind:order="order"></OrderCard>
       </div>
     </div>
+    <div v-else class="d-flex justify-content-center align-items-center">
+      <Loader size="60px" background-color="#000000"></Loader>
+    </div>
   </div>
 </template>
 
@@ -21,12 +24,17 @@ import ProductCard from "@/components/ProductCard";
 import OrderCard from "@/components/OrderCard";
 import SalesService from "@/common/sales.service";
 import Order from "@/models/order.model";
+import Loader from "@/components/Loader";
 
 let salesService = new SalesService();
 
 export default {
   name: 'ShiftConsole',
-  components: {OrderCard, ProductCard},
+  components: {
+    OrderCard,
+    ProductCard,
+    Loader
+  },
   props: {
     shiftId: String,
   },
