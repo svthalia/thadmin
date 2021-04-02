@@ -1,6 +1,6 @@
 <template>
   <div class="progress" style="height: 5px; border-radius: 0;">
-    <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="progress-bar" role="progressbar" :style="{ maxWidth: '100%', width: shiftProgress + '%' }" :aria-valuenow="shiftProgress" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
   <div class="container">
     <div class="row flex-column-reverse flex-md-row mt-4" v-if="shift">
@@ -42,23 +42,32 @@ export default {
     },
     fetchOrderUpdates: async function() {
       if (this.order != null && this.order._o && this.order.synced && !this.order._o.payment) {
-        await salesService.getOrderDetails(this.order).then((order) => (this.order = order));
+        await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
       }
     },
+    recalculateProgress: function () {
+      const now = new Date();
+      const shiftStart = new Date(this.shift.start_date);
+      const shiftEnd = new Date(this.shift.end_date);
+      this.shiftProgress = ((now - shiftStart) / (shiftEnd - shiftStart) * 100);
+    },
     reset: function () {
-      this.order = null;
+      salesService.deleteOrder(this.order);
+      this.order = new Order();
     }
   },
   data () {
     return {
       shift: null,
       order: null,
+      shiftProgress: 0,
     }
   },
   mounted () {
     this.nextOrder();
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
     setInterval(this.fetchOrderUpdates, 2000);
+    setInterval(this.recalculateProgress, 5000);
   },
 }
 </script>

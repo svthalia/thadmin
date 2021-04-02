@@ -1,4 +1,7 @@
 <template>
+  <div class="background-container">
+    <div class="background-image"></div>
+  </div>
   <div id="page-container">
     <Header />
     <RouterView class="route-view" />
@@ -32,11 +35,21 @@ export default {
   text-decoration: inherit;
 }
 
+.background-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  z-index: -10;
+}
 .background-image {
+  height: 100%;
+  width: 100%;
   background-image: url("https://253qv1sx4ey389p9wtpp9sj0-wpengine.netdna-ssl.com/wp-content/uploads/2020/05/GettyImages-1044350714-700x461.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  filter: blur(15px);
   transform: scale(1.1);
   z-index: -10;
 }

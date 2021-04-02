@@ -1,8 +1,8 @@
 <template>
   <div class="card text-center mt-1 mb-3 user-select-none" v-if="order">
       <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
-        <div class="card-header">
-          <span class="order-description">{{order.getDescription()}}</span> - <span class="payment-amount">€{{order.getAmount()}}</span>
+        <div class="card-header font-oswald">
+          <span class="order-description">{{order.getDescription()}}</span> • <span class="payment-amount">€{{order.getAmount()}}</span>
         </div>
 
         <div class="card-body">
@@ -25,9 +25,10 @@
         </div>
       </div>
       <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="!order.isPaid() && needsSync()">
-        <button class="btn btn-primary p-5" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
+        <button class="btn btn-primary p-5 d-block" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
-    </div>
+      <p class="position-absolute bottom m-2" v-if="(order.hasProducts() || order.getPK()) && !order.isPaid()" v-on:click="deleteOrder"><i class="fas fa-trash"></i></p>
+  </div>
 </template>
 
 <script>
@@ -43,7 +44,7 @@ export default {
     order: Order | null
   },
   methods: {
-    done: function () {
+    deleteOrder: function () {
       this.$parent.reset();
     },
     updateOrder: function () {

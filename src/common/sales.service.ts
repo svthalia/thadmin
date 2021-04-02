@@ -4,6 +4,7 @@ import Paginated from "@/models/paginated.model";
 import Shift from "@/models/shift.model";
 import Order from "@/models/order.model";
 import _Order from "@/models/_order.model";
+import Member from "@/models/member.model";
 
 class SalesService {
   apiService = ApiService;
@@ -32,7 +33,7 @@ class SalesService {
     const result: AxiosResponse<_Order> = await this.apiService.post(
       `/sales/${shift}/orders/`,
       data
-    );
+    ); // TODO this endpoint does not accept all fields, so items are set to 0
     if (order != null) {
       order.updateFromAPI(result.data);
       return order;
@@ -64,6 +65,24 @@ class SalesService {
       order.updateFromAPI(result.data);
     }
     return order;
+  }
+
+  async deleteOrder(order: Order) {
+    if (order._o == null) {
+      return;
+    }
+    return await this.apiService.delete(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      `/sales/order/${order._o.pk}/`
+    );
+  }
+
+  async getAuthorizedUserData(): Promise<Member> {
+    const result: AxiosResponse<Member> = await this.apiService.get(
+      `/members/me/`
+    );
+    return result.data;
   }
 }
 

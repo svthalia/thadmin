@@ -7,7 +7,7 @@
       <ul class="navbar-nav">
           <li class="nav-item">
             <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
-              <span class="mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
+              <span class="font-oswald mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
             </a>
             <router-link v-else class="nav-link d-flex justify-content-center align-items-center" to="Login">
               <i class="fas fa-sign-in-alt"></i>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import ApiService from "@/common/api.service";
+import SalesService from "@/common/sales.service";
 import { mapState, mapGetters } from 'vuex';
 import store from "@/store";
 
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       currentTime: "",
-      username: "username",
+      username: "",
     }
   },
   methods: {
@@ -52,6 +52,10 @@ export default {
   },
   mounted: function() {
     setInterval(this.time, 1000);
+    if (this.authenticated) {
+      let apiService = new SalesService();
+      apiService.getAuthorizedUserData().then(member => this.username = member.profile.short_display_name);
+    }
   }
 }
 </script>

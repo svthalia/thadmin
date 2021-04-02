@@ -35,7 +35,7 @@ export default {
       } catch (e) {
         alert("Authorization failed due to parsing error, please try again...");
       }
-      window.location.href = "/shifts";
+      window.location.href = "/";
     }
   },
   mounted () {

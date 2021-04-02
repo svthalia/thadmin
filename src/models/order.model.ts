@@ -45,6 +45,10 @@ class Order {
     return !!this._o?.payment;
   }
 
+  public hasProducts() {
+    return this.items != null && this.items.length > 0;
+  }
+
   public getOrderItem(product: Product): OrderItem | null {
     if (this.items == null) {
       return null;
