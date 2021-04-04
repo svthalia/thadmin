@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { OAuthCredentials } from "@/common/token.service";
+import getEnvVar from "@/util/env";
 
 interface OAuthAuthorizeData {
   access_token: string;
@@ -116,10 +117,10 @@ class _ApiService {
 }
 
 const ApiService = new _ApiService(
-  process.env.VUE_APP_API_OAUTH_CLIENT_ID,
-  process.env.VUE_APP_API_BASE_URI,
-  process.env.VUE_APP_API_AUTHORIZATION_ENDPOINT,
-  process.env.VUE_APP_API_OAUTH_REDIRECT_URI
+  getEnvVar("VUE_APP_API_OAUTH_CLIENT_ID"),
+  getEnvVar("VUE_APP_API_BASE_URI"),
+  getEnvVar("VUE_APP_API_AUTHORIZATION_ENDPOINT"),
+  getEnvVar("VUE_APP_API_OAUTH_REDIRECT_URI")
 );
 
 export default ApiService;
