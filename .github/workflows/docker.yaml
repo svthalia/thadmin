@@ -7,7 +7,7 @@ on:
       - master
 
 env:
-  DOCKER_IMAGE: "docker.pkg.github.com/svthalia/thadmin2/thadmin2-production:latest"
+  DOCKER_IMAGE: "docker.pkg.github.com/svthalia/thadmin2/thadmin-production:latest"
 
 jobs:
   build-docker:
