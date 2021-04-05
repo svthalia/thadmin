@@ -1,6 +1,6 @@
 <template>
   <div class="container text-center">
-    <h1 class="font-oswald mt-5 text-center">THADMIN <span class="font-italic">vieux</span></h1>
+    <h1 class="font-oswald mt-5 text-center">Thadmin</h1>
     <div v-if="authenticated">
       You are currently logged in. Go to the <router-link :to="{ name: 'Shifts' }">Shifts view</router-link> to view
       or create a new shift.
@@ -52,5 +52,11 @@ export default {
 </script>
 
 <style scoped>
+#logo-t {
+  transition: color .15s ease-in-out;
+}
 
+.login-btn:hover * {
+  fill: #e62272 !important;
+}
 </style>

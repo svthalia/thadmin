@@ -8,13 +8,13 @@ interface _Order {
   order_items: [OrderItem] | null;
   order_description: string | null;
   age_restricted: boolean | null;
-  total_amount: number | null;
+  subtotal: number | null;
   discount: number | null;
-  payment_amount: number;
-  payment: string | null;
+  total_amount: number | null;
+  num_items: number | null;
+  payment: Payment | null;
+  payer: Member | null;
   payment_url: string | null;
-  payer: string | null;
-  details: string | null;
 }
 
 export default _Order;

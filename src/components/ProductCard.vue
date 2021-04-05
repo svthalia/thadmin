@@ -1,5 +1,5 @@
 <template>
-  <div class="card m-1" style="cursor: pointer;" v-on:click="increment">
+  <div class="card m-1 shadow" :class="{ 'show-pointer': !paid }" v-on="!paid ? { click: increment } : {}">
     <div class="card-body user-select-none">
       <div class="d-flex align-items-center">
         <h4 class="card-title flex-grow-0 mb-0 mr-auto font-oswald">{{ product.name }}</h4>
@@ -9,9 +9,9 @@
     </div>
     <div class="card-footer">
       <div class="d-flex flex-row justify-content-center align-items-center">
-        <button v-on:click.stop class="btn btn-danger mx-1 text-white" :class="{ 'disabled': amount<=0 }" v-on="amount>0 ? { click: del } : {}"><i class="fas fa-trash"></i></button>
-        <button v-on:click.stop class="btn btn-warning mx-1 text-white" :class="{ 'disabled': amount<=0 }" v-on="amount>0 ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
-        <button v-on:click.stop class="btn btn-success mx-1 text-white" v-on:click="increment"><i class="fas fa-plus"></i></button>
+        <button v-on:click.stop class="btn btn-danger mx-1 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: del } : {}"><i class="fas fa-trash"></i></button>
+        <button v-on:click.stop class="btn btn-warning mx-1 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
+        <button v-on:click.stop class="btn btn-success mx-1 text-white" :class="{ 'disabled': paid }" v-on="!paid ? { click: increment } : {}"><i class="fas fa-plus"></i></button>
       </div>
     </div>
   </div>
@@ -31,6 +31,10 @@ export default {
     amount: function() {
       if (this.order) {return this.order.productAmount(this.product);}
       return 0;
+    },
+    paid: function() {
+      if (this.order) {return this.order.isPaid();}
+      return false;
     }
   },
   methods: {
@@ -52,7 +56,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 @media screen and (max-width: 767px) {
   .card {
     font-size: 0.5rem;
@@ -67,6 +70,10 @@ export default {
 
 p {
   font-family: 'Open Sans', sans-serif;
+}
+
+.show-pointer {
+  cursor: pointer;
 }
 
 .amount {

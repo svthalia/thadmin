@@ -1,5 +1,5 @@
 <template>
-  <div class="card text-center mt-1 mb-3 user-select-none" v-if="order">
+  <div class="card text-center mt-1 mb-3 user-select-none shadow" v-if="order">
       <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
         <div class="card-header font-oswald">
           <span class="order-description">{{order.getDescription()}}</span> • <span class="payment-amount">€{{order.getAmount()}}</span>
@@ -9,8 +9,10 @@
           <p class="order-details">Order {{ order.getPK() }}</p>
 
           <div class="payment-info" v-if="order.isPaid()">
-            <img class="payer-img" src="https://pbs.twimg.com/profile_images/1013449906151940096/0NnKwYgr_400x400.jpg">
-            <button class="done" v-on:click="done">Done</button>
+            <img class="payer-img" v-if="order.hasPayer()" :src="order.getPayerImage()">
+            <img class="payer-img" v-else src="@/assets/images/anonymousUser.jpg">
+            <p v-if="order.hasPayer()">Paid by {{ order.getPayer() }}</p>
+            <p v-else>Paid by anonymous user</p>
           </div>
 
           <qrcode-vue class="qr-code p-3 h-auto" v-bind:class="{ blurred: needsSync() }" v-else v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
@@ -22,10 +24,13 @@
             <button class="btn btn-primary m-1"><i class="fas fa-coins"></i> Cash payment</button>
             <button class="btn btn-primary m-1"><i class="fas fa-credit-card"></i> Card payment</button>
           </p>
+          <p v-if="order.isPaid()">
+            <button class="btn btn-primary m-1" v-on:click="done">Done</button>
+          </p>
         </div>
       </div>
       <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="!order.isPaid() && needsSync()">
-        <button class="btn btn-primary p-5 d-block" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
+        <button class="btn btn-primary p-5 d-block shadow" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
       <p class="position-absolute bottom m-2" v-if="(order.hasProducts() || order.getPK()) && !order.isPaid()" v-on:click="deleteOrder"><i class="fas fa-trash"></i></p>
   </div>
@@ -44,6 +49,9 @@ export default {
     order: Order | null
   },
   methods: {
+    done: function() {
+      this.$parent.done();
+    },
     deleteOrder: function () {
       this.$parent.reset();
     },
@@ -53,7 +61,7 @@ export default {
     needsSync: function () {
       return !this.order.synced;
     },
-  }
+  },
 }
 </script>
 
@@ -75,7 +83,7 @@ p {
   position: relative;
 }
 
-.qr-code {
+.qr-code, .payer-img {
   max-width: 400px;
   width: 100%;
 }

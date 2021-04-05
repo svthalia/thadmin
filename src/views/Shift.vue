@@ -5,6 +5,9 @@
   <div class="container">
     <div class="row flex-column-reverse flex-md-row mt-4" v-if="shift">
       <div class="products-wrapper col-md-8">
+        <div class="alert alert-info mt-2" role="alert" v-if="shiftProgress>=100">
+          This shift has ended. However, as long as the shift has not yet been locked, you can still process orders.
+        </div>
         <div class="d-flex flex-wrap card-deck product-cards">
           <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
         </div>
@@ -55,9 +58,12 @@ export default {
     },
     recalculateProgress: function () {
       const now = new Date();
-      const shiftStart = new Date(this.shift.start_date);
-      const shiftEnd = new Date(this.shift.end_date);
+      const shiftStart = new Date(this.shift.start);
+      const shiftEnd = new Date(this.shift.end);
       this.shiftProgress = ((now - shiftStart) / (shiftEnd - shiftStart) * 100);
+    },
+    done: function () {
+      this.order = new Order();
     },
     reset: function () {
       salesService.deleteOrder(this.order);
@@ -74,7 +80,7 @@ export default {
   mounted () {
     this.nextOrder();
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
-    setInterval(this.fetchOrderUpdates, 2000);
+    setInterval(this.fetchOrderUpdates, 3000);
     setInterval(this.recalculateProgress, 5000);
   },
 }

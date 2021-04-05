@@ -2,10 +2,13 @@ import Product from "@/models/product.model";
 
 export default interface Shift {
   pk: number;
-  start_date: string;
-  end_date: string;
+  title: string;
+  locked: boolean;
+  active: boolean;
+  start: string;
+  end: string;
   products: [Product];
   total_revenue: number;
   num_orders: number;
-  orders: string;
+  product_sales: {};
 }

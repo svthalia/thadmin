@@ -1,6 +1,6 @@
 <template>
   <div class="background-container">
-    <div class="background-image"></div>
+    <div class="background-image" :style="pageBackground"></div>
   </div>
   <div id="page-container">
     <Header />
@@ -15,6 +15,13 @@ export default {
   name: "App",
   components: {
     Header
+  },
+  data() {
+    return {
+      pageBackground: {
+        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`
+      }
+    };
   }
 };
 </script>
@@ -43,15 +50,14 @@ export default {
   z-index: -10;
 }
 .background-image {
-  height: 100%;
-  width: 100%;
-  background-image: url("https://253qv1sx4ey389p9wtpp9sj0-wpengine.netdna-ssl.com/wp-content/uploads/2020/05/GettyImages-1044350714-700x461.jpg");
+  height: 110%;
+  width: 110%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: left;
   background-attachment: fixed;
-  filter: blur(15px);
-  transform: scale(1.1);
+  filter: blur(10px);
+  transform: scale(1.2);
   z-index: -10;
 }
 

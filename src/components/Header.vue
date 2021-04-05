@@ -9,7 +9,7 @@
       <ul class="navbar-nav">
           <li class="nav-item">
             <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
-              <img v-if="memberImageURL" :src="memberImageURL" alt="Member profile image" style="max-height: 1rem;" class="mr-1"/>
+              <img v-if="memberImageURL" :src="memberImageURL" alt="Member profile image" style="max-height: 1rem;" class="memberProfileImage mr-2"/>
               <span class="font-oswald mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
             </a>
             <a v-else href="#" class="nav-link d-flex justify-content-center align-items-center" @click="startLogin">
@@ -75,4 +75,9 @@ export default {
 </script>
 
 <style scoped>
+
+.memberProfileImage {
+  border-radius: 50%;
+}
+
 </style>

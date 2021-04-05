@@ -28,10 +28,10 @@ class Order {
   }
 
   public getAmount() {
-    if (this._o?.payment_amount) {
-      return this._o.payment_amount;
+    if (this._o?.total_amount) {
+      return this._o.total_amount;
     }
-    return null;
+    return "?";
   }
 
   public getPaymentUrl() {
@@ -43,6 +43,18 @@ class Order {
 
   public isPaid() {
     return !!this._o?.payment;
+  }
+
+  public hasPayer() {
+    return this._o?.payer != null;
+  }
+
+  public getPayer() {
+    return this._o?.payer.profile.display_name;
+  }
+
+  public getPayerImage() {
+    return this._o?.payer.profile.photo.medium;
   }
 
   public hasProducts() {
@@ -134,9 +146,13 @@ class Order {
     this.items = o.order_items;
   }
 
-  public getAPIData(): { order_items: [OrderItem] | null } {
+  public getAPIData(): {} {
+    const data = this.items;
+    if (data != null) {
+      data.forEach(i => delete i.total);
+    }
     // eslint-disable-next-line @typescript-eslint/camelcase
-    return { order_items: this.items };
+    return { order_items: data };
   }
 
   static orderFromAPI(o: _Order) {

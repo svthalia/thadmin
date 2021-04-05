@@ -1,5 +1,5 @@
 <template>
-  <div class="container authorize mt-3 text-center">
+  <div class="container authorize mt-5 text-center">
     <h1 class="font-oswald">Authorization in progress...</h1>
     <p>You will be redirected shortly, if redirection fails, please click
       <router-link :to="{ name: 'Index' }">here</router-link></p>
