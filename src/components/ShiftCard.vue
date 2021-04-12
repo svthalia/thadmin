@@ -1,18 +1,16 @@
 <template>
-  <router-link class="d-flex justify-content-center align-items-center link-unstyled" :to="{ name: 'Shift', params: { shiftId: shift.pk } }">
-    <div class="card shadow">
-      <div class="card-header">
-        <h2 class="card-title font-oswald">Shift {{ shift.pk }}</h2>
-        <p class="card-subtitle"><span v-if="shift.title">{{ shift.title }} •</span> From {{ start_end_time() }}</p>
-      </div>
-      <div class="card-body">
-        <p class="font-weight-bold">Amount of orders: {{ shift.num_orders }}</p>
-        <ul id="example-2">
-          <li v-for="(amount, product) in shift.product_sales">
-            {{ product }}: {{ amount }}x
-          </li>
-        </ul>
-      </div>
+  <router-link class="link-unstyled" :to="{ name: 'Shift', params: { shiftId: shift.pk } }">
+    <div class="card-header">
+      <h2 class="card-title font-oswald">Shift {{ shift.pk }}</h2>
+      <p class="card-subtitle"><span v-if="shift.title">{{ shift.title }} •</span> From {{ start_end_time() }}</p>
+    </div>
+    <div class="card-body">
+      <p class="font-weight-bold">Amount of orders: {{ shift.num_orders }}</p>
+      <ul id="example-2">
+        <li v-for="(amount, product) in shift.product_sales">
+          {{ product }}: {{ amount }}x
+        </li>
+      </ul>
     </div>
   </router-link>
 </template>

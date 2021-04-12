@@ -2,8 +2,8 @@
   <div class="container">
     <h1 class="font-oswald mt-5 text-center">Currently active shifts</h1>
     <p class="text-center">Create a new shift via <a :href="createNewShiftURL" target="_blank">thalia.nu</a></p>
-    <div v-if="shifts" class="mt-5 d-flex align-items-center">
-      <ShiftCard v-for="shift in shifts" v-bind:shift="shift" class="m-3"></ShiftCard>
+    <div v-if="shifts" class="card-deck mt-5 d-flex align-items-stretch">
+      <ShiftCard v-for="shift in shifts" v-bind:shift="shift" class="card shadow m-3"></ShiftCard>
     </div>
     <div v-else class="d-flex justify-content-center align-items-center">
       <Loader size="60px" background-color="#000000"></Loader>
