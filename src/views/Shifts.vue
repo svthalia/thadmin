@@ -30,8 +30,13 @@ export default {
       createNewShiftURL: process.env.VUE_APP_API_BASE_URI + "/admin/sales/shift/add/",
     }
   },
+  methods: {
+    fetchShifts: async function() {
+      salesService.getShifts().then((shifts) => (this.shifts = shifts));
+    },
+  },
   mounted () {
-    salesService.getShifts().then((shifts) => (this.shifts = shifts));
+    let fetchInterval = setInterval(this.fetchShifts, 10000);
   },
 }
 </script>
