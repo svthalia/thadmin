@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { OAuthCredentials } from "@/common/token.service";
+import store from "@/store";
 
 interface OAuthAuthorizeData {
   access_token: string;
@@ -32,56 +32,24 @@ class _ApiService {
     return `${this.baseUri}${this.authorizationEndpoint}`;
   }
 
-  getToken(): string {
-    return OAuthCredentials.getAccessToken();
-  }
-
-  loggedIn() {
-    try {
-      return this.getToken() !== null;
-    } catch {
-      return false;
-    }
-  }
-
-  logOut() {
-    OAuthCredentials.removeToken();
-    OAuthCredentials.store();
-  }
-
   getAuthorizeRedirectURL(): string {
     const redirectURL = new URL(this.getAuthorizationUri());
+    redirectURL.searchParams.append(
+      "scope",
+      "profile:read sales:read sales:write"
+    );
     redirectURL.searchParams.append("client_id", this.clientId);
     redirectURL.searchParams.append("response_type", "token");
-    redirectURL.searchParams.append("state", OAuthCredentials.newRandomState());
-    return redirectURL.href;
-  }
-
-  setAccessToken(
-    state: string,
-    accessToken: string,
-    expires: number,
-    tokenType: string,
-    scope: string[]
-  ): boolean {
-    if (state === OAuthCredentials.getState()) {
-      OAuthCredentials.set(accessToken, Date.now() + expires, tokenType, scope);
-      OAuthCredentials.store();
-      return true;
-    } else {
-      return false;
+    if (store.state.User.stateKey !== null) {
+      redirectURL.searchParams.append("state", store.state.User.stateKey);
     }
-  }
-
-  signOut() {
-    OAuthCredentials.removeToken();
-    OAuthCredentials.store();
+    return redirectURL.href;
   }
 
   async get<T>(resource: string): Promise<AxiosResponse<T>> {
     return axios.get(`${this.baseUri}/api/v2${resource}`, {
       headers: {
-        Authorization: `Bearer ${await this.getToken()}`
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`
       }
     });
   }
@@ -89,7 +57,7 @@ class _ApiService {
   async post<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.post(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
-        Authorization: `Bearer ${await this.getToken()}`
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`
       }
     });
   }
@@ -97,7 +65,7 @@ class _ApiService {
   async put<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.put(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
-        Authorization: `Bearer ${await this.getToken()}`
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`
       }
     });
   }
@@ -105,7 +73,7 @@ class _ApiService {
   async delete<T>(resource: string): Promise<AxiosResponse<T>> {
     return axios.delete(`${this.baseUri}/api/v2${resource}`, {
       headers: {
-        Authorization: `Bearer ${await this.getToken()}`
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`
       }
     });
   }
