@@ -1,4 +1,4 @@
-# Thadmin _vieux_
+# Thadmin
 ==============
 
 Getting started

@@ -80,8 +80,9 @@ export default {
   mounted () {
     this.nextOrder();
     salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
-    setInterval(this.fetchOrderUpdates, 3000);
-    setInterval(this.recalculateProgress, 5000);
+    let fetchInterval = setInterval(this.fetchOrderUpdates, 3000);
+    let progressInterval = setInterval(this.recalculateProgress, 5000);
+    // TODO clear interval on unmounted
   },
 }
 </script>

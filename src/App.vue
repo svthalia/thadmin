@@ -58,6 +58,7 @@ export default {
   background-attachment: fixed;
   filter: blur(10px);
   transform: scale(1.2);
+  opacity: 0.3;
   z-index: -10;
 }
 
