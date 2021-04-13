@@ -1,0 +1,33 @@
+terraform {
+  required_version = ">=0.14.10"
+
+  required_providers {
+    aws    = ">= 3.28.0"
+  }
+  
+  backend "s3" {
+    bucket = "thalia-terraform-state"
+    key    = "thadmin/develop.tfstate"
+    region = "eu-west-1"
+  }
+}
+
+provider "aws" {
+  profile             = var.aws_profile
+  region              = var.aws_region
+  allowed_account_ids = [var.aws_account_id]
+}
+
+module "thadmin_hosting" {
+  source = "../../modules/hosting"
+  prefix = var.prefix
+  tags   = var.aws_tags
+}
+
+module "thadmin_routing" {
+  source      = "../../modules/routing"
+  prefix      = var.prefix
+  domain_name = var.domain_name
+  tags        = var.aws_tags
+  s3_bucket = module.thadmin_hosting.s3_bucket
+}
