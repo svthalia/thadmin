@@ -1,15 +1,19 @@
 variable "tags" {
-  type = map(string)
+  description = "AWS tags for resources"
+  type        = map(string)
 }
 
 variable "prefix" {
-  type = string
+  description = "Name to be used on all the resources as identifier"
+  type        = string
 }
 
 variable "domain_name" {
-  type = string
+  description = "Domain name the application will be hosted on"
+  type        = string
 }
 
 variable "s3_bucket" {
-  type = string
+  description = "Name of the S3 bucket that the application is deployed to"
+  type        = string
 }

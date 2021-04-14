@@ -1,3 +1,4 @@
 output "s3_bucket" {
-  value = aws_s3_bucket.this.id
+  description = "S3 bucket id where this application lives"
+  value       = aws_s3_bucket.this.id
 }

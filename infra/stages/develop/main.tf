@@ -2,9 +2,9 @@ terraform {
   required_version = ">=0.14.10"
 
   required_providers {
-    aws    = ">= 3.28.0"
+    aws = ">= 3.28.0"
   }
-  
+
   backend "s3" {
     bucket = "thalia-terraform-state"
     key    = "thadmin/develop.tfstate"
@@ -13,9 +13,8 @@ terraform {
 }
 
 provider "aws" {
-  profile             = var.aws_profile
-  region              = var.aws_region
-  allowed_account_ids = [var.aws_account_id]
+  profile = var.aws_profile
+  region  = var.aws_region
 }
 
 module "thadmin_hosting" {
@@ -29,5 +28,5 @@ module "thadmin_routing" {
   prefix      = var.prefix
   domain_name = var.domain_name
   tags        = var.aws_tags
-  s3_bucket = module.thadmin_hosting.s3_bucket
+  s3_bucket   = module.thadmin_hosting.s3_bucket
 }

@@ -16,8 +16,8 @@ locals {
 # S3 bucket #
 ##############
 resource "aws_s3_bucket" "this" {
-  bucket = "thalia-${var.prefix}"
-  acl    = "private"
+  bucket        = "thalia-${var.prefix}"
+  acl           = "private"
   force_destroy = "true"
 
   tags = var.tags
@@ -28,11 +28,11 @@ resource "aws_s3_bucket" "this" {
 ############
 
 data "external" "code_build" {
-	program = ["bash", "-c", <<EOT
+  program = ["bash", "-c", <<EOT
 (yarn build) >&2 && echo "{\"dest\": \"dist\"}"
 EOT
-]
-	working_dir = local.root_directory
+  ]
+  working_dir = local.root_directory
 }
 
 ############
@@ -41,9 +41,9 @@ EOT
 
 resource "aws_s3_bucket_object" "code_build_object" {
   for_each = fileset("${data.external.code_build.working_dir}/${data.external.code_build.result.dest}", "**")
-	key    = each.value
-	source = "${data.external.code_build.working_dir}/${data.external.code_build.result.dest}/${each.value}"
-	bucket = aws_s3_bucket.this.bucket
+  key      = each.value
+  source   = "${data.external.code_build.working_dir}/${data.external.code_build.result.dest}/${each.value}"
+  bucket   = aws_s3_bucket.this.bucket
 
   etag         = filemd5("${data.external.code_build.working_dir}/${data.external.code_build.result.dest}/${each.value}")
   content_type = lookup(local.mime_type_mappings, concat(regexall("\\.([^\\.]*)$", each.value), [[""]])[0][0], "application/octet-stream")

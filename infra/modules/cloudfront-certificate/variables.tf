@@ -1,11 +1,14 @@
 variable "domain_name" {
-  type = string
+  description = "Domain name to create the certificate for"
+  type        = string
 }
 
 variable "zone_id" {
-  type = string
+  description = "Route53 zone to use for validation"
+  type        = string
 }
 
 variable "tags" {
-  type = map(string)
+  description = "AWS tags for resources"
+  type        = map(string)
 }

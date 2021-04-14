@@ -4,25 +4,26 @@ variable "prefix" {
 }
 
 variable "stage" {
-  type = string
+  description = "Deployment stage"
+  type        = string
 }
 
 variable "domain_name" {
-  type = string
-}
-
-variable "aws_account_id" {
-  type = string
+  description = "Domain name used to host the application in this stage"
+  type        = string
 }
 
 variable "aws_profile" {
-  type = string
+  description = "AWS credentials profile to use"
+  type        = string
 }
 
 variable "aws_region" {
-  type = string
+  description = "AWS region where the application should be hosted"
+  type        = string
 }
 
 variable "aws_tags" {
-  type = map(string)
+  description = "AWS tags that should be part of every resource for identification and billing"
+  type        = map(string)
 }

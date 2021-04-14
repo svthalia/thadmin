@@ -54,9 +54,9 @@ module "cloudfront" {
 
   custom_error_response = [
     {
-      error_code = 404
-      response_code = 200
-      response_page_path = "/index.html"
+      error_code            = 404
+      response_code         = 200
+      response_page_path    = "/index.html"
       error_caching_min_ttl = 60
     }
   ]
@@ -75,10 +75,10 @@ module "cloudfront" {
 #######
 
 module "acm" {
-  source  = "../cloudfront-certificate"
+  source = "../cloudfront-certificate"
 
-  domain_name               = var.domain_name
-  zone_id                   = data.aws_route53_zone.this.id
+  domain_name = var.domain_name
+  zone_id     = data.aws_route53_zone.this.id
 
   tags = var.tags
 }

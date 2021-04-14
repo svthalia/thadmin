@@ -1,3 +1,6 @@
+# This module can create an ACM certificate in the us-east-1 region for usage in Cloudfront
+# It sets the correct records and executes the validation
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -27,7 +30,7 @@ resource "aws_route53_record" "validation" {
   zone_id         = var.zone_id
 }
 
-resource "aws_acm_certificate_validation" "example" {
+resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = [for record in aws_route53_record.validation : record.fqdn]
 }

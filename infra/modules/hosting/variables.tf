@@ -1,7 +1,9 @@
 variable "tags" {
-  type = map(string)
+  description = "AWS tags for resources"
+  type        = map(string)
 }
 
 variable "prefix" {
-  type = string
+  description = "Name to be used on all the resources as identifier"
+  type        = string
 }
