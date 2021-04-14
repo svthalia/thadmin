@@ -73,8 +73,7 @@ jobs:
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
           <details><summary>Show Plan</summary>
           <pre>${process.env.PLAN}</pre>
-          </details>
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+          </details>`;
 
           const {data: comments} = await github.issues.listComments({
               owner: context.repo.owner,
@@ -116,10 +115,18 @@ jobs:
       name: Develop
       url: https://thadmin-develop.technicie.nl
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Setup Node
       uses: actions/setup-node@v1
       with:
         node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -152,10 +159,18 @@ jobs:
       name: Staging
       url: https://thadmin-staging.technicie.nl
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Setup Node
       uses: actions/setup-node@v1
       with:
         node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -188,10 +203,18 @@ jobs:
       name: Production
       url: https://thadmin.thalia.nu
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Setup Node
       uses: actions/setup-node@v1
       with:
         node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
