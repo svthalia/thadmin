@@ -15,5 +15,5 @@ prefix = "thadmin-staging"
 
 stage = "staging"
 
-domain_name = "thadmin-staging.thalia.nu"
+domain_name = "thadmin-staging.technicie.nl"
 

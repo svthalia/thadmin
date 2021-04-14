@@ -15,5 +15,5 @@ prefix = "thadmin"
 
 stage = "production"
 
-domain_name = "sales.thalia.nu"
+domain_name = "thadmin.thalia.nu"
 

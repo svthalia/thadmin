@@ -28,3 +28,4 @@ pnpm-debug.log*
 *.tfstate
 *.tfstate.backup
 local.auto.tfvars
+*.lock.hcl
