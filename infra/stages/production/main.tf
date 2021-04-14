@@ -7,7 +7,7 @@ terraform {
 
   backend "s3" {
     bucket = "thalia-terraform-state"
-    key    = "thadmin/develop.tfstate"
+    key    = "thadmin/production.tfstate"
     region = "eu-west-1"
   }
 }
