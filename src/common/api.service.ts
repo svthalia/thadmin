@@ -33,17 +33,18 @@ class _ApiService {
   }
 
   getAuthorizeRedirectURL(): string {
-    const redirectURL = new URL(this.getAuthorizationUri());
-    redirectURL.searchParams.append(
+    const authURL = new URL(this.getAuthorizationUri());
+    authURL.searchParams.append(
       "scope",
       "profile:read sales:read sales:write"
     );
-    redirectURL.searchParams.append("client_id", this.clientId);
-    redirectURL.searchParams.append("response_type", "token");
+    authURL.searchParams.append("client_id", this.clientId);
+    authURL.searchParams.append("redirect_uri", this.redirectUri);
+    authURL.searchParams.append("response_type", "token");
     if (store.state.User.stateKey !== null) {
-      redirectURL.searchParams.append("state", store.state.User.stateKey);
+      authURL.searchParams.append("state", store.state.User.stateKey);
     }
-    return redirectURL.href;
+    return authURL.href;
   }
 
   async get<T>(resource: string): Promise<AxiosResponse<T>> {
