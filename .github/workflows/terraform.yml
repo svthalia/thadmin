@@ -1,0 +1,235 @@
+name: Infrastructure
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  checks:
+    name: Terraform Planning
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
+
+    - name: Terraform Format
+      id: fmt
+      working-directory: infra
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Init
+      id: init
+      if: github.event_name == 'pull_request'
+      working-directory: infra/stages/staging
+      run: terraform init
+      continue-on-error: true
+
+    - name: Terraform Plan
+      id: plan
+      if: github.event_name == 'pull_request'
+      working-directory: infra/stages/staging
+      run: terraform plan -no-color
+      continue-on-error: true
+
+    - name: Update Pull Request
+      uses: actions/github-script@v3
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const commentBody = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          <details><summary>Show Plan</summary>
+          <pre>${process.env.PLAN}</pre>
+          </details>`;
+
+          const {data: comments} = await github.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number,
+            })
+    
+          // Find any comment already made by the bot.
+          const existingComment = comments.find(comment => comment.user.id === 41898282)
+          if (existingComment) {
+            await github.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existingComment.id,
+              body: commentBody
+            })
+          } else {
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number,
+              body: commentBody
+            })
+          }
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
+  develop_deploy:
+    name: Terraform Develop Deploy
+    runs-on: ubuntu-latest
+    env:
+      VUE_APP_API_BASE_URI: https://staging.thalia.nu
+      VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+      VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-develop.technicie.nl/auth/callback
+    environment:
+      name: Develop
+      url: https://thadmin-develop.technicie.nl
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Terraform Apply
+      working-directory: infra/stages/develop
+      run: terraform init && terraform apply -auto-approve
+
+  staging_deploy:
+    name: Terraform Staging Deploy
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      VUE_APP_API_BASE_URI: https://staging.thalia.nu
+      VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+      VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-staging.technicie.nl/auth/callback
+    environment:
+      name: Staging
+      url: https://thadmin-staging.technicie.nl
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Terraform Apply
+      working-directory: infra/stages/staging
+      run: terraform init && terraform apply -auto-approve
+
+  production_deploy:
+    name: Terraform Production Deploy
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    env:
+      VUE_APP_API_BASE_URI: https://thalia.nu
+      VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+      VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin.thalia.nu/auth/callback
+    environment:
+      name: Production
+      url: https://thadmin.thalia.nu
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.10
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Terraform Apply
+      working-directory: infra/stages/production
+      run: terraform init && terraform apply -auto-approve
