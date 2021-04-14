@@ -11,11 +11,30 @@ env:
 
 jobs:
   checks:
-    name: 'Terraform Formatting'
+    name: Terraform Planning
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
@@ -53,7 +72,7 @@ jobs:
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
           <details><summary>Show Plan</summary>
-          \`\`\`${process.env.PLAN}\`\`\`
+          <pre>${process.env.PLAN}</pre>
           </details>
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
@@ -88,27 +107,61 @@ jobs:
   staging_deploy:
     name: Terraform Staging Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra/stages/staging
     environment:
       name: Staging
       url: https://thadmin-staging.technicie.nl
     steps:
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform init && terraform apply -auto-approve
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Terraform Apply
+      working-directory: infra/stages/staging
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      run: terraform init && terraform apply -auto-approve
 
   production_deploy:
     name: Terraform Production Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra/stages/production
     environment:
       name: Production
       url: https://thadmin.thalia.nu
     steps:
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: terraform init && terraform apply -auto-approve
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Setup Yarn
+      run: yarn install --frozen-lockfile
+
+    - name: Terraform Apply
+      working-directory: infra/stages/production
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      run: terraform init && terraform apply -auto-approve
