@@ -61,7 +61,7 @@ export default {
     })
   },
   mounted () {
-    setInterval(this.time, 1000);
+    this.clockInterval = setInterval(this.time, 1000);
     if (this.authenticated) {
       let apiService = new SalesService();
       apiService.getAuthorizedUserData().then(member =>
@@ -70,6 +70,9 @@ export default {
         this.memberImageURL = member.profile.photo.small;
       });
     }
+  },
+  destroyed: function() {
+    clearInterval(this.clockInterval);
   },
 }
 </script>

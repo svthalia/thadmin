@@ -36,8 +36,12 @@ export default {
     },
   },
   mounted () {
-    let fetchInterval = setInterval(this.fetchShifts, 10000);
+    this.fetchShifts();
+    this.fetchInterval = setInterval(this.fetchShifts, 10000);
   },
+  destroyed: function() {
+    clearInterval(this.fetchInterval);
+  }
 }
 </script>
 
