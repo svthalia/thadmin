@@ -15,7 +15,8 @@ data "aws_s3_bucket" "this" {
 ##############
 
 module "cloudfront" {
-  source = "terraform-aws-modules/cloudfront/aws"
+  source  = "terraform-aws-modules/cloudfront/aws"
+  version = "2.2.0"
 
   aliases = [var.domain_name]
 
@@ -93,8 +94,8 @@ resource "aws_route53_record" "api" {
   type    = "A"
 
   alias {
-    name                   = module.cloudfront.this_cloudfront_distribution_domain_name
-    zone_id                = module.cloudfront.this_cloudfront_distribution_hosted_zone_id
+    name                   = module.cloudfront.cloudfront_distribution_domain_name
+    zone_id                = module.cloudfront.cloudfront_distribution_hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -109,7 +110,7 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
+      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
     }
   }
 
@@ -119,7 +120,7 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
+      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
     }
   }
 }
