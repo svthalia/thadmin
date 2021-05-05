@@ -151,6 +151,7 @@ jobs:
         environment_url: https://thadmin-develop.technicie.nl
         log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         state: in_progress
+        mediaType: '{"previews": ["flash", "ant-man"]}'
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -187,7 +188,7 @@ jobs:
       working-directory: infra/stages/develop
       run: terraform init && terraform apply -auto-approve
 
-    - name: set deployment status to success
+    - name: Deployment success
       uses: octokit/request-action@v2.x
       with:
         route: POST /repos/:repository/deployments/:deployment/statuses
@@ -200,7 +201,7 @@ jobs:
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: set deployment status to failure
+    - name: Deployment failure
       uses: octokit/request-action@v2.x
       if: failure()
       with:
