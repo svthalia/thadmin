@@ -137,6 +137,7 @@ jobs:
         ref: ${{ fromJson(steps.get-branch.outputs.data).head.ref }}
         environment: Develop
         auto_merge: false
+        required_contexts: ["Linting", "Terraform Planning"]
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
