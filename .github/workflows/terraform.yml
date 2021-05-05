@@ -117,28 +117,41 @@ jobs:
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-develop.technicie.nl/auth/callback
-    environment:
-      name: Develop
-      url: https://thadmin-develop.technicie.nl
     steps:
     - name: Get branch
-      uses: actions/github-script@v3
       id: get-branch
+      uses: octokit/request-action@v2.x
       with:
-        result-encoding: string
-        script: |
-          const request = {
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.issue.number
-          }
-          core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
-          try {
-            const result = await github.pulls.get(request)
-            return result.data.head.ref
-          } catch (err) {
-            core.setFailed(`Request failed with error ${err}`)
-          }
+        route: GET /repos/:repository/pulls/:issue_id
+        repository: ${{ github.repository }}
+        issue_id: ${{ github.event.issue.number }}
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: Create deployment
+      id: create-deploy
+      uses: octokit/request-action@v2.x
+      with:
+        route: POST /repos/:repository/deployments
+        repository: ${{ github.repository }}
+        ref: ${{ fromJson(steps.get-branch.outputs.data).head.ref }}
+        environment: Develop
+        auto_merge: false
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: Start deployment
+      uses: octokit/request-action@v2.x
+      with:
+        route: POST /repos/:repository/deployments/:deployment/statuses
+        repository: ${{ github.repository }}
+        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
+        environment: Develop
+        environment_url: https://thadmin-develop.technicie.nl
+        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        state: in_progress
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -172,6 +185,33 @@ jobs:
     - name: Terraform Apply
       working-directory: infra/stages/develop
       run: terraform init && terraform apply -auto-approve
+
+    - name: set deployment status to success
+      uses: octokit/request-action@v2.x
+      with:
+        route: POST /repos/:repository/deployments/:deployment/statuses
+        repository: ${{ github.repository }}
+        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
+        environment: Develop
+        environment_url: https://thadmin-develop.technicie.nl
+        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        state: success
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: set deployment status to failure
+      uses: octokit/request-action@v2.x
+      if: failure()
+      with:
+        route: POST /repos/:repository/deployments/:deployment/statuses
+        repository: ${{ github.repository }}
+        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
+        environment: Develop
+        environment_url: https://thadmin-develop.technicie.nl
+        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        state: failure
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   staging_deploy:
     name: Terraform Staging Deploy
