@@ -3,7 +3,11 @@ on:
   push:
     branches:
       - master
+  issue_comment:
+    types: [created, edited]
   pull_request:
+    types: [opened, synchronize]
+  workflow_dispatch:
     
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -13,6 +17,7 @@ jobs:
   checks:
     name: Terraform Planning
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -106,6 +111,7 @@ jobs:
   develop_deploy:
     name: Terraform Develop Deploy
     runs-on: ubuntu-latest
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.comment.body == 'deploy'
     env:
       VUE_APP_API_BASE_URI: https://staging.thalia.nu
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
@@ -192,7 +198,7 @@ jobs:
 
   production_deploy:
     name: Terraform Production Deploy
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
       VUE_APP_API_BASE_URI: https://thalia.nu
