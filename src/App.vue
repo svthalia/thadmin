@@ -82,7 +82,7 @@ body {
 }
 
 .site-header {
-  background-color: #e62272;
+  background-color: blue;
 }
 
 .site-header .nav-item a.nav-link {
