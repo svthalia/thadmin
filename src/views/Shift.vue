@@ -79,7 +79,7 @@ export default {
   },
   mounted () {
     this.nextOrder();
-    salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
+    salesService.getShift(parseInt(this.shiftId)).then((shift) => {this.shift = shift; this.recalculateProgress()});
     this.fetchInterval = setInterval(this.fetchOrderUpdates, 3000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
