@@ -79,11 +79,14 @@ export default {
   },
   mounted () {
     this.nextOrder();
-    salesService.getShift(parseInt(this.shiftId)).then((shift) => (this.shift = shift));
-    let fetchInterval = setInterval(this.fetchOrderUpdates, 3000);
-    let progressInterval = setInterval(this.recalculateProgress, 5000);
-    // TODO clear interval on unmounted
+    salesService.getShift(parseInt(this.shiftId)).then((shift) => {this.shift = shift; this.recalculateProgress()});
+    this.fetchInterval = setInterval(this.fetchOrderUpdates, 3000);
+    this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
+  destroyed: function() {
+    clearInterval(this.fetchInterval);
+    clearInterval(this.progressInterval);
+  }
 }
 </script>
 
