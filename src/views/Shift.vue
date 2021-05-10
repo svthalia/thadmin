@@ -56,6 +56,9 @@ export default {
         await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
       }
     },
+    fetchShiftUpdates: async function() {
+      await salesService.getShift(this.shiftId).then((shift) => this.shift = shift)
+    },
     recalculateProgress: function () {
       const now = new Date();
       const shiftStart = new Date(this.shift.start);
@@ -80,11 +83,13 @@ export default {
   mounted () {
     this.nextOrder();
     salesService.getShift(parseInt(this.shiftId)).then((shift) => {this.shift = shift; this.recalculateProgress()});
-    this.fetchInterval = setInterval(this.fetchOrderUpdates, 3000);
+    this.fetchOrderUpdatesInterval = setInterval(this.fetchOrderUpdates, 3000);
+    this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
   destroyed: function() {
-    clearInterval(this.fetchInterval);
+    clearInterval(this.fetchOrderUpdatesInterval);
+    clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
   }
 }
