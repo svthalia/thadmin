@@ -45,6 +45,10 @@ class Order {
     return !!this._o?.payment;
   }
 
+  public needsPayment() {
+    return this.getAmount() != 0;
+  }
+
   public hasPayer() {
     return this._o?.payer != null;
   }
