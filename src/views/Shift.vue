@@ -57,7 +57,7 @@ export default {
       }
     },
     fetchShiftUpdates: async function() {
-      await salesService.getShift(this.shiftId).then((shift) => this.shift = shift)
+      this.shift = await salesService.getShift(this.shiftId);
     },
     recalculateProgress: function () {
       const now = new Date();
