@@ -14,8 +14,6 @@ import * as Sentry from "@sentry/vue";
 import { Integrations } from "@sentry/tracing";
 import Header from "@/components/Header";
 
-console.log(process.env.VUE_APP_SENTRY_DSN);
-
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
