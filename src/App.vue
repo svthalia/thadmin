@@ -17,6 +17,8 @@ import Header from "@/components/Header";
 Sentry.init({
   Vue,
   dsn: process.env.VUE_APP_SENTRY_DSN,
+  release: process.env.VUE_APP_SENTRY_RELEASE,
+  environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
   integrations: [new Integrations.BrowserTracing()],
   tracingOptions: {
     trackComponents: true,
