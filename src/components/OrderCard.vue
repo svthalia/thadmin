@@ -17,7 +17,7 @@
 
         <div class="card-body py-2 px-2 mb-3">
           <div class="px-5">
-            <div v-if="order.getPayer()">
+            <div v-if="order.hasPayer()">
               <img class="image-fill" v-if="order.hasPayer()" :src="order.getPayerImage()" :alt="order.getPayer()">
               <img class="image-fill" v-else src="@/assets/images/anonymousUser.jpg" alt="anonymous user" >
             </div>
@@ -35,11 +35,15 @@
             <span class="user-select-none" v-else>or register a</span>
           </p>
           <div class="m-0" v-if="!order.isPaid() && order.needsPayment()">
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"><i class="fas fa-coins"></i> Cash payment</button>
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"><i class="fas fa-credit-card"></i> Card payment</button>
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#cash-payment-modal"><i class="fas fa-coins"></i> Cash payment</button>
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#card-payment-modal"><i class="fas fa-credit-card"></i> Card payment</button>
           </div>
           <div class="m-0" v-else>
-            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done">Done</button>
+            <div class="mt-1 mb-3" v-if="order.isAgeRestricted() && !order.needsPayment()">
+              <span class="mb-1">This order contains age restricted products.</span>
+              <button type="button" class="btn btn-outline-success py-1 py-md-2 px-5 m-1 font-oswald" v-bind:class="{ 'btn-success text-white': order.ageCheckPerformed }" data-bs-toggle="button" autocomplete="off" aria-pressed="true" @click="toggleAgeCheck">I verified that this person is 18+</button>
+            </div>
+            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done" :disabled="order.isAgeRestricted() && !order.ageCheckPerformed">Done</button>
           </div>
         </div>
       </div>
@@ -47,16 +51,19 @@
         <button class="btn btn-primary p-5 d-block shadow" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
   </div>
+  <ManualPaymentModal id="cash-payment-modal" paymentMethod="cash" v-bind:order="order"></ManualPaymentModal>
+  <ManualPaymentModal id="card-payment-modal" paymentMethod="card" v-bind:order="order"></ManualPaymentModal>
 </template>
 
 <script>
 import Order from '@/common/sales.service'
 import QrcodeVue from 'qrcode.vue'
+import ManualPaymentModal from "@/components/ManualPaymentModal";
 
 export default {
   name: 'OrderCard',
   components: {
-    QrcodeVue
+    QrcodeVue, ManualPaymentModal
   },
   props: {
     order: Order | null
@@ -70,6 +77,9 @@ export default {
     },
     needsSync: function () {
       return !this.order.synced;
+    },
+    toggleAgeCheck: function () {
+      this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
     },
   },
 }

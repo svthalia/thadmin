@@ -6,11 +6,13 @@ class Order {
   items: [OrderItem] | null;
   synced: boolean;
   _o: _Order | null;
+  ageCheckPerformed: boolean;
 
   constructor() {
     this.items = null;
     this.synced = false;
     this._o = null;
+    this.ageCheckPerformed = false;
   }
 
   public getPK() {
@@ -39,6 +41,10 @@ class Order {
       return this._o.payment_url;
     }
     return "#";
+  }
+
+  public isAgeRestricted() {
+    return this._o?.age_restricted;
   }
 
   public isPaid() {
