@@ -23,12 +23,6 @@ Sentry.init({
   },
 });
 
-try {
-  throw new Error("test5");
-} catch (err) {
-  Sentry.captureException(err);
-}
-
 export default {
   name: "App",
   components: {
