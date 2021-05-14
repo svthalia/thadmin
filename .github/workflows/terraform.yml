@@ -131,33 +131,6 @@ jobs:
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: Create deployment
-      id: create-deploy
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/deployments
-        repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.get-branch.outputs.data).head.ref }}
-        environment: Develop
-        auto_merge: false
-        required_contexts: '["Linting", "Terraform Planning"]'
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: Start deployment
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
-        repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: in_progress
-        mediaType: '{"previews": ["flash", "ant-man"]}'
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
     - name: Checkout
       uses: actions/checkout@v2
       with:
@@ -191,30 +164,14 @@ jobs:
       working-directory: infra/stages/develop
       run: terraform init && terraform apply -auto-approve
 
-    - name: Deployment success
+    - name: Comment in PR
+      id: get-branch
       uses: octokit/request-action@v2.x
       with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
+        route: GET /repos/:repository/pulls/:issue_id/comments
         repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: success
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: Deployment failure
-      uses: octokit/request-action@v2.x
-      if: failure()
-      with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
-        repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: failure
+        issue_id: ${{ github.event.issue.number }}
+        body: Latest changes in this PR have been deployed to https://thadmin-develop.technicie.nl/.
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
