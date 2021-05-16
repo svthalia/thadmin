@@ -4,20 +4,20 @@
         <div class="card-header">
           <div class="row m-0 p-0">
             <div class="col-10 p-0 m-0">
-              <h6 class="m-0 text-left font-oswald font-weight-normal user-select-auto">{{order.getDescription()}}</h6>
+              <h6 class="m-0 text-left font-oswald font-weight-normal user-select-none"><span class="user-select-all" v-if="order.getDescription()">{{order.getDescription()}}</span><span v-else class="user-select-none invisible">No order</span></h6>
             </div>
-            <div class="col-2 p-0 m-0"><h6 class="text-right m-0 font-oswald font-weight-normal user-select-all">€{{order.getAmount()}}</h6>
+            <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0"><h6 class="text-right m-0 font-oswald font-weight-normal"><span class="user-select-all">€{{order.getAmount()}}</span></h6>
             </div>
           </div>
         </div>
 
         <div class="card-body pt-2 pb-1 px-2">
-          <p class="m-0 order-id user-select-auto">Order <span class="user-select-all">{{ order.getPK() }}</span></p>
+          <p class="m-0 order-id user-select-none">Order <span class="user-select-all">{{ order.getPK() }}</span></p>
         </div>
 
         <div class="card-body py-2 px-2 mb-3">
           <div class="px-5">
-            <div v-if="order.isPaid()">
+            <div v-if="order.getPayer()">
               <img class="image-fill" v-if="order.hasPayer()" :src="order.getPayerImage()" :alt="order.getPayer()">
               <img class="image-fill" v-else src="@/assets/images/anonymousUser.jpg" alt="anonymous user" >
             </div>
@@ -29,7 +29,7 @@
 
         <div class="card-footer p-1 p-md-2" v-bind:class="{ blurred: needsSync() }">
           <p class="m-0 p-1 user-select-none" style="cursor: default">
-            <span class="user-select-auto" v-if="order.isPaid() && order.hasPayer()">Paid by {{ order.getPayer() }}</span>
+            <span class="user-select-none" v-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
             <span class="user-select-none" v-else-if="order.isPaid()">Paid by anonymous user</span>
             <span class="user-select-none" v-else-if="!order.needsPayment()">No payment required</span>
             <span class="user-select-none" v-else>or register a</span>

@@ -3,7 +3,7 @@
     <div class="progress-bar" role="progressbar" :style="{ maxWidth: '100%', width: shiftProgress + '%' }" :aria-valuenow="shiftProgress" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
   <div class="container mt-2 mt-md-4 mb-2">
-    <div class="alert alert-info mt-2" role="alert" v-if="shiftProgress>=100">
+    <div class="alert alert-info mt-2 user-select-none" style="cursor: default" role="alert" v-if="shiftProgress>=100">
       This shift has ended. However, as long as the shift has not yet been locked, you can still process orders.
     </div>
     <div class="row flex-column-reverse flex-md-row px-2" v-if="shift">
