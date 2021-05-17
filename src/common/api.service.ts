@@ -34,10 +34,7 @@ class _ApiService {
 
   getAuthorizeRedirectURL(): string {
     const authURL = new URL(this.getAuthorizationUri());
-    authURL.searchParams.append(
-      "scope",
-      "profile:read sales:read sales:write"
-    );
+    authURL.searchParams.append("scope", "profile:read sales:read sales:write");
     authURL.searchParams.append("client_id", this.clientId);
     authURL.searchParams.append("redirect_uri", this.redirectUri);
     authURL.searchParams.append("response_type", "token");
