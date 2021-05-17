@@ -7,6 +7,7 @@
 
         <div class="card-body">
           <p class="order-details">Order {{ order.getPK() }}</p>
+          <p v-if="!order.needsPayment()">This order does not require a payment.</p>
 
           <div class="payment-info" v-if="order.isPaid()">
             <img class="payer-img" v-if="order.hasPayer()" :src="order.getPayerImage()">
@@ -15,16 +16,16 @@
             <p v-else>Paid by anonymous user</p>
           </div>
 
-          <qrcode-vue class="qr-code p-3 h-auto" v-bind:class="{ blurred: needsSync() }" v-else v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
+          <qrcode-vue class="qr-code p-3 h-auto" v-bind:class="{ blurred: needsSync() || !order.needsPayment() }" v-else v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
         </div>
 
         <div class="card-footer" v-bind:class="{ blurred: needsSync() }">
-          <p v-if="!order.isPaid()" class="text-uppercase">or register a</p>
-          <p v-if="!order.isPaid()">
+          <p v-if="!order.isPaid() && order.needsPayment()">
+            <span class="text-uppercase">or register a</span> <br>
             <button class="btn btn-primary m-1"><i class="fas fa-coins"></i> Cash payment</button>
             <button class="btn btn-primary m-1"><i class="fas fa-credit-card"></i> Card payment</button>
           </p>
-          <p v-if="order.isPaid()">
+          <p v-if="order.isPaid() || !order.needsPayment()">
             <button class="btn btn-primary m-1" v-on:click="done">Done</button>
           </p>
         </div>
