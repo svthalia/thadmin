@@ -53,6 +53,13 @@ export default {
       await store.dispatch("User/newRandomState");
       await store.dispatch("User/store");
       window.location.href = ApiService.getAuthorizeRedirectURL();
+    },
+    setUserProfileImage() {
+      let apiService = new SalesService();
+      apiService.getAuthorizedUserData().then(member => {
+        this.username = member.profile.short_display_name;
+        this.memberImageURL = member.profile.photo.small;
+      });
     }
   },
   computed: {
@@ -60,15 +67,17 @@ export default {
       authenticated: "User/isLoggedIn"
     })
   },
+  watch: {
+    authenticated: function (val) {
+      if (val) {
+        this.setUserProfileImage();
+      }
+    }
+  },
   mounted () {
     this.clockInterval = setInterval(this.time, 1000);
     if (this.authenticated) {
-      let apiService = new SalesService();
-      apiService.getAuthorizedUserData().then(member =>
-      {
-        this.username = member.profile.short_display_name;
-        this.memberImageURL = member.profile.photo.small;
-      });
+      this.setUserProfileImage();
     }
   },
   destroyed: function() {

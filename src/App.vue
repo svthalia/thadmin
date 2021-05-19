@@ -9,20 +9,34 @@
 </template>
 
 <script>
+import { Vue } from "vue";
+import * as Sentry from "@sentry/vue";
+import { Integrations } from "@sentry/tracing";
 import Header from "@/components/Header";
+
+Sentry.init({
+  Vue,
+  dsn: process.env.VUE_APP_SENTRY_DSN,
+  release: process.env.VUE_APP_SENTRY_RELEASE,
+  environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
+  integrations: [new Integrations.BrowserTracing()],
+  tracingOptions: {
+    trackComponents: true,
+  },
+});
 
 export default {
   name: "App",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
       pageBackground: {
-        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`
-      }
+        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`,
+      },
     };
-  }
+  },
 };
 </script>
 

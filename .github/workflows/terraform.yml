@@ -8,7 +8,7 @@ on:
   pull_request:
     types: [opened, synchronize]
   workflow_dispatch:
-    
+
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -85,7 +85,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.payload.number,
             })
-    
+
           // Find any comment already made by the bot.
           const existingComment = comments.find(comment => comment.user.id === 41898282)
           if (existingComment) {
@@ -117,6 +117,12 @@ jobs:
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-develop.technicie.nl/auth/callback
+      VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_ENVIRONMENT: develop
+    environment:
+      name: Develop
+      url: https://thadmin-develop.technicie.nl
     steps:
     - name: Get branch
       id: get-branch
@@ -128,37 +134,10 @@ jobs:
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: Create deployment
-      id: create-deploy
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/deployments
-        repository: ${{ github.repository }}
-        ref: ${{ fromJson(steps.get-branch.outputs.data).head.ref }}
-        environment: Develop
-        auto_merge: false
-        required_contexts: '["Linting", "Terraform Planning"]'
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: Start deployment
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
-        repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: in_progress
-        mediaType: '{"previews": ["flash", "ant-man"]}'
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        ref: ${{ steps.get-branch.outputs.result }}
+        ref: ${{ fromJson(steps.get-branch.outputs.data).head.ref }}
 
     - name: Setup Node
       uses: actions/setup-node@v1
@@ -188,30 +167,13 @@ jobs:
       working-directory: infra/stages/develop
       run: terraform init && terraform apply -auto-approve
 
-    - name: Deployment success
+    - name: Comment in PR
       uses: octokit/request-action@v2.x
       with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
+        route: GET /repos/:repository/pulls/:issue_id/comments
         repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: success
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-    - name: Deployment failure
-      uses: octokit/request-action@v2.x
-      if: failure()
-      with:
-        route: POST /repos/:repository/deployments/:deployment/statuses
-        repository: ${{ github.repository }}
-        deployment: ${{ fromJson(steps.create-deploy.outputs.data).id }}
-        environment: Develop
-        environment_url: https://thadmin-develop.technicie.nl
-        log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        state: failure
+        issue_id: ${{ github.event.issue.number }}
+        body: Latest changes in this PR have been deployed to https://thadmin-develop.technicie.nl/.
       env:
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -224,6 +186,9 @@ jobs:
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-staging.technicie.nl/auth/callback
+      VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_ENVIRONMENT: staging
     environment:
       name: Staging
       url: https://thadmin-staging.technicie.nl
@@ -268,6 +233,9 @@ jobs:
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin.thalia.nu/auth/callback
+      VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_ENVIRONMENT: production
     environment:
       name: Production
       url: https://thadmin.thalia.nu
