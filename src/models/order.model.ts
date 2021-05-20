@@ -63,6 +63,15 @@ class Order {
     return this._o?.payer.profile.display_name;
   }
 
+  public payerIsAdult() {
+    if (this.hasPayer()) {
+      const birthDate = new Date(this._o?.payer.profile.birthday);
+      const date = new Date();
+      date.setFullYear(date.getFullYear() - 18);
+      return birthDate <= date;
+    }
+  }
+
   public getPayerImage() {
     return this._o?.payer.profile.photo.medium;
   }

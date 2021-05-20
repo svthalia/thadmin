@@ -1,6 +1,6 @@
 <template>
   <div class="card text-center user-select-none shadow order-card border-0" v-if="order">
-      <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
+      <div v-bind:class="{ blurred: needsSync(), 'alert-danger': invalidPayer() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <div class="row m-0 p-0">
             <div class="col-10 p-0 m-0">
@@ -29,12 +29,16 @@
 
         <div class="card-footer p-1 p-md-2" v-bind:class="{ blurred: needsSync() }">
           <p class="m-0 p-1 user-select-none" style="cursor: default">
-            <span class="user-select-none" v-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
+            <span class="user-select-none" v-if="invalidPayer()">This payer is under-age!</span>
+            <span class="user-select-none" v-else-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
             <span class="user-select-none" v-else-if="order.isPaid()">Paid by anonymous user</span>
             <span class="user-select-none" v-else-if="!order.needsPayment()">No payment required</span>
             <span class="user-select-none" v-else>or register a</span>
           </p>
-          <div class="m-0" v-if="!order.isPaid() && order.needsPayment()">
+          <div class="m-0" v-if="invalidPayer()">
+            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="reset()">Delete</button>
+          </div>
+          <div class="m-0" v-else-if="!order.isPaid() && order.needsPayment()">
             <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#cash-payment-modal"><i class="fas fa-coins"></i> Cash payment</button>
             <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#card-payment-modal"><i class="fas fa-credit-card"></i> Card payment</button>
           </div>
@@ -72,11 +76,17 @@ export default {
     done: function() {
       this.$parent.done();
     },
+    reset: function() {
+      this.$parent.reset();
+    },
     updateOrder: function () {
       this.$parent.updateCurrentOrder();
     },
     needsSync: function () {
       return !this.order.synced;
+    },
+    invalidPayer: function () {
+      return this.order.isAgeRestricted() && this.order.hasPayer() && !this.order.payerIsAdult();
     },
     toggleAgeCheck: function () {
       this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
