@@ -38,7 +38,7 @@ class Order {
     if (this._o?.payment_url) {
       return this._o.payment_url;
     }
-    return "https://www.youtube.com/watch?v=V4MF2s6MLxY";
+    return "#";
   }
 
   public isPaid() {

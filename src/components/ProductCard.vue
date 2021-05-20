@@ -1,17 +1,23 @@
 <template>
-  <div class="card m-1 shadow" :class="{ 'show-pointer': !paid }" v-on="!paid ? { click: increment } : {}">
-    <div class="card-body user-select-none">
-      <div class="d-flex align-items-center">
-        <h4 class="card-title flex-grow-0 mb-0 mr-auto font-oswald">{{ product.name }}</h4>
-        <span class="flex-grow-0 amount" v-if="amount>0">{{ amount }}</span>
+  <div class="square-wrapper">
+    <div class="card square border-0 p-0 shadow user-select-none" :class="{ 'show-pointer': !paid }" v-on="!paid ? { click: increment } : {}">
+      <div class="card-body user-select-none p-2">
+        <div class="row m-0 p-0">
+          <div class="col-9 p-0 m-0">
+            <h5 class="card-title font-oswald p-0 m-0">{{ product.name }}</h5>
+          </div>
+          <div class="col-3 p-0 m-0">
+            <h5 class="font-oswald m-0 text-right" style="color: #e62272" v-if="amount>0">{{ amount }}</h5>
+          </div>
+        </div>
+        <p class="price p-0 m-0">€{{ product.price }} <span v-if="product.age_restricted">• 18+</span></p>
       </div>
-      <p class="price">€{{ product.price }} <span v-if="product.age_restricted">• 18+</span></p>
-    </div>
-    <div class="card-footer">
-      <div class="d-flex flex-row justify-content-center align-items-center">
-        <button v-on:click.stop class="btn btn-danger mx-1 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: del } : {}"><i class="fas fa-trash"></i></button>
-        <button v-on:click.stop class="btn btn-warning mx-1 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
-        <button v-on:click.stop class="btn btn-success mx-1 text-white" :class="{ 'disabled': paid }" v-on="!paid ? { click: increment } : {}"><i class="fas fa-plus"></i></button>
+      <div class="card-footer bg-white p-0 border-0">
+        <div class="d-flex align-content-stretch align-items-stretch">
+          <button v-on:click.stop class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: del } : {}"><i class="fas fa-trash"></i></button>
+          <button v-on:click.stop class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
+          <button v-on:click.stop class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': paid }" v-on="!paid ? { click: increment } : {}"><i class="fas fa-plus"></i></button>
+        </div>
       </div>
     </div>
   </div>
@@ -46,9 +52,15 @@ export default {
     },
     decrement() {
       this.order.minusProduct(this.product);
+      if (!this.order.hasProducts()) {
+        this.$parent.reset();
+      }
     },
     del() {
       this.order.deleteProduct(this.product);
+      if (!this.order.hasProducts()) {
+        this.$parent.reset();
+      }
     }
   }
 };
@@ -56,31 +68,38 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@media screen and (max-width: 767px) {
-  .card {
-    font-size: 0.5rem;
-    max-width: calc(50% - 0.5rem);
-  }
-
-  .btn {
-    font-size: 0.5rem;
-    padding: 0.2rem 0.4rem;
-  }
-}
-
 p {
   font-family: 'Open Sans', sans-serif;
 }
-
+button {
+  border-radius: 0;
+}
 .show-pointer {
   cursor: pointer;
 }
 
-.amount {
-  color: #e62272;
-  font-size: 1.2rem;
-  text-align: center;
-  font-family: 'Oswald', sans-serif;
+.square-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.square-wrapper:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+.square {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.card-body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.disabled {
+  visibility: hidden;
 }
 
 </style>

@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="font-oswald mt-5 text-center">Currently active shifts</h1>
     <p class="text-center">Create a new shift via <a :href="createNewShiftURL" target="_blank">thalia.nu</a></p>
-    <div v-if="shifts" class="card-deck mt-5 d-flex align-items-stretch">
+    <div v-if="shifts" class="card-columns mt-5">
       <ShiftCard v-for="shift in shifts" v-bind:shift="shift" class="card shadow m-3"></ShiftCard>
     </div>
     <div v-else class="d-flex justify-content-center align-items-center">

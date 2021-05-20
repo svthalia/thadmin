@@ -2,17 +2,19 @@
   <div class="progress" style="height: 5px; border-radius: 0;">
     <div class="progress-bar" role="progressbar" :style="{ maxWidth: '100%', width: shiftProgress + '%' }" :aria-valuenow="shiftProgress" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
-  <div class="container">
-    <div class="row flex-column-reverse flex-md-row mt-4" v-if="shift">
-      <div class="products-wrapper col-md-8">
-        <div class="alert alert-info mt-2" role="alert" v-if="shiftProgress>=100">
-          This shift has ended. However, as long as the shift has not yet been locked, you can still process orders.
-        </div>
-        <div class="d-flex flex-wrap card-deck product-cards">
-          <ProductCard v-for="product in shift.products" :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
+  <div class="container mt-2 mt-md-4 mb-2">
+    <div class="alert alert-info mt-2 user-select-none" style="cursor: default" role="alert" v-if="shiftProgress>=100">
+      This shift has ended. However, as long as the shift has not yet been locked, you can still process orders.
+    </div>
+    <div class="row flex-column-reverse flex-md-row px-2" v-if="shift">
+      <div class="products-wrapper col-md-7">
+        <div class="product-cards row row-cols-3 row-cols-lg-4">
+          <div class="col p-1 p-sm-2" v-for="product in shift.products" :key="product">
+            <ProductCard :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
+          </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-5 p-1 p-sm-2 mb-2 mb-md-0">
         <OrderCard v-if="order" v-bind:order="order"></OrderCard>
       </div>
     </div>
@@ -91,20 +93,13 @@ export default {
     clearInterval(this.fetchOrderUpdatesInterval);
     clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
+    this.reset();
   }
 }
 </script>
 
-<style scoped>
-
-.product-cards {
-  justify-content: space-between;
+<style>
+button, .card, .card-header, .card-body, .card-footer{
+  border-radius: 0 !important;
 }
-
-@media screen and (max-width: 767px) {
-  .product-cards {
-    justify-content: center;
-  }
-}
-
 </style>

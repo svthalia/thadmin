@@ -1,16 +1,16 @@
 <template>
-  <nav class="navbar sticky-top site-header navbar-dark">
+  <nav class="navbar sticky-top site-header navbar-dark user-select-none">
     <div class="container pl-0 pr-0">
-      <div class="nav-link navbar-brand font-oswald pl-0 pr-0 mr-1">
+      <div class="nav-link navbar-brand font-oswald pl-0 pr-0 mr-1 user-select-none">
         <router-link v-if="authenticated" :to="{ name: 'Shifts' }" class="font-weight-bold link-unstyled">Thadmin</router-link>
         <router-link v-else :to="{ name: 'Index' }" class="font-weight-bold link-unstyled">Thadmin</router-link>
         • <span class="font-weight-light">{{ currentTime }}</span>
       </div>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center" @click="logout">
+            <a v-if="authenticated" href="#" class="nav-link d-flex justify-content-center align-items-center user-select-none" @click="logout">
               <img v-if="memberImageURL" :src="memberImageURL" alt="Member profile image" style="max-height: 1rem;" class="memberProfileImage mr-2"/>
-              <span class="font-oswald mr-2">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
+              <span class="font-oswald mr-2 user-select-none">{{ username }}</span><i class="fas fa-sign-out-alt"></i>
             </a>
             <a v-else href="#" class="nav-link d-flex justify-content-center align-items-center" @click="startLogin">
               <i class="fas fa-sign-in-alt"></i>
