@@ -6,7 +6,7 @@
             <div class="col-10 p-0 m-0">
               <h6 class="m-0 text-left font-oswald font-weight-normal user-select-none"><span class="user-select-all" v-if="order.getDescription()">{{order.getDescription()}}</span><span v-else class="user-select-none invisible">No order</span></h6>
             </div>
-            <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0"><h6 class="text-right m-0 font-oswald font-weight-normal"><span class="user-select-all">€{{order.getAmount()}}</span></h6>
+            <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0"><h6 class="text-right m-0 font-oswald font-weight-normal"><span class="user-select-all">€{{order.getAmount() !== null ? order.getAmount() : "?"}}</span></h6>
             </div>
           </div>
         </div>
@@ -17,7 +17,7 @@
 
         <div class="card-body py-2 px-2 mb-3">
           <div class="px-5">
-            <div v-if="order.getPayer()">
+            <div v-if="order.hasPayer()">
               <img class="image-fill" v-if="order.hasPayer()" :src="order.getPayerImage()" :alt="order.getPayer()">
               <img class="image-fill" v-else src="@/assets/images/anonymousUser.jpg" alt="anonymous user" >
             </div>

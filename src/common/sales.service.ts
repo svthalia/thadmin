@@ -25,7 +25,7 @@ class SalesService {
 
   async newOrder(shift: number, order: Order | null = null): Promise<Order> {
     let data: {};
-    if (order == null) {
+    if (order === null) {
       data = {};
     } else {
       data = order.getAPIData();
@@ -34,7 +34,7 @@ class SalesService {
       `/sales/shifts/${shift}/orders/`,
       data
     ); // TODO this endpoint does not accept all fields, so items are set to 0
-    if (order != null) {
+    if (order !== null) {
       order.updateFromAPI(result.data);
       return order;
     }
@@ -42,7 +42,7 @@ class SalesService {
   }
 
   async updateOrder(order: Order, shift: number | null = null): Promise<Order> {
-    if (order._o == null && shift != null) {
+    if (order._o === null && shift !== null) {
       order = await this.newOrder(shift, order);
     }
     const result: AxiosResponse<_Order> = await this.apiService.put(
@@ -68,7 +68,7 @@ class SalesService {
   }
 
   async deleteOrder(order: Order) {
-    if (order._o == null) {
+    if (order._o === null) {
       return;
     }
     return await this.apiService.delete(
