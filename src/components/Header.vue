@@ -80,7 +80,7 @@ export default {
       this.setUserProfileImage();
     }
   },
-  destroyed: function() {
+  unmounted () {
     clearInterval(this.clockInterval);
   },
 }

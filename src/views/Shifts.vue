@@ -39,7 +39,7 @@ export default {
     this.fetchShifts();
     this.fetchInterval = setInterval(this.fetchShifts, 10000);
   },
-  destroyed: function() {
+  unmounted () {
     clearInterval(this.fetchInterval);
   }
 }
