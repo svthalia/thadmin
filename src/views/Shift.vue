@@ -89,7 +89,7 @@ export default {
     this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
-  destroyed: function() {
+  unmounted () {
     clearInterval(this.fetchOrderUpdatesInterval);
     clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
