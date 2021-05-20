@@ -48,13 +48,13 @@ export default {
       this.order = new Order();
     },
     updateCurrentOrder: async function () {
-      if (this.order == null) {
+      if (this.order === null) {
         this.nextOrder();
       }
       await salesService.updateOrder(this.order, parseInt(this.shiftId)).then((order) => (this.order = order));
     },
     fetchOrderUpdates: async function() {
-      if (this.order != null && this.order._o && this.order.synced && !this.order._o.payment) {
+      if (this.order !== null && this.order._o && this.order.synced && !this.order._o.payment) {
         await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
       }
     },
@@ -89,7 +89,7 @@ export default {
     this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
-  destroyed: function() {
+  unmounted () {
     clearInterval(this.fetchOrderUpdatesInterval);
     clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
