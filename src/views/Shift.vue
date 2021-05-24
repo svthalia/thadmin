@@ -54,9 +54,7 @@ export default {
       await salesService.updateOrder(this.order, parseInt(this.shiftId)).then((order) => (this.order = order));
     },
     fetchOrderUpdates: async function() {
-      if (this.order !== null && this.order._o && this.order.synced && !this.order._o.payment) {
-        await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
-      }
+      await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
     },
     fetchShiftUpdates: async function() {
       this.shift = await salesService.getShift(this.shiftId);
@@ -73,6 +71,19 @@ export default {
     reset: function () {
       salesService.deleteOrder(this.order);
       this.order = new Order();
+    },
+    startFetching: function () {
+      this.fetchingTimedOut = false;
+      this.fetchOrderUpdatesInterval = setInterval(this.fetchOrderUpdates, 2000);
+      this.stopFetchingTimer = setTimeout(() => {this.fetchingTimedOut=true; clearInterval(this.fetchOrderUpdatesInterval)}, 20000)
+    },
+    manualOrderSync: function () {
+      this.updateCurrentOrder();
+      this.startFetching();
+    },
+    deleteIfOrphan: function () {
+      if (!this.order.isPaid())
+        salesService.deleteOrder(this.order);
     }
   },
   data () {
@@ -80,12 +91,45 @@ export default {
       shift: null,
       order: null,
       shiftProgress: 0,
+      fetchingTimedOut: false
     }
+  },
+  computed: {
+    awaitingPayment: function () {
+      return this.order !== null && this.order._o && this.order.synced && !this.order._o.payment;
+    }
+  },
+  watch: {
+    order: {
+      handler(val) {
+        clearTimeout(this.orderSyncTimer);
+        if (this.awaitingPayment)
+          return
+        this.orderSyncTimer = setTimeout(this.updateCurrentOrder, 500);
+      },
+      deep: true
+    },
+    shift: {
+      handler(_) {
+        this.recalculateProgress()
+      },
+      deep: true
+    },
+    awaitingPayment: function (val) {
+      clearInterval(this.fetchOrderUpdatesInterval);
+      clearTimeout(this.stopFetchingTimer);
+      this.fetchingTimedOut=false
+      if (val) {
+        this.startFetching();
+      }
+    },
+  },
+  beforeMount() {
+    window.addEventListener("beforeunload", this.deleteIfOrphan)
   },
   mounted () {
     this.nextOrder();
     salesService.getShift(parseInt(this.shiftId)).then((shift) => {this.shift = shift; this.recalculateProgress()});
-    this.fetchOrderUpdatesInterval = setInterval(this.fetchOrderUpdates, 3000);
     this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
@@ -93,7 +137,8 @@ export default {
     clearInterval(this.fetchOrderUpdatesInterval);
     clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
-    this.reset();
+    clearTimeout(this.stopFetchingTimer);
+    this.deleteIfOrphan();
   }
 }
 </script>

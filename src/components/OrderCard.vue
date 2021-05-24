@@ -1,6 +1,6 @@
 <template>
   <div class="card text-center user-select-none shadow order-card border-0" v-if="order">
-      <div v-bind:class="{ blurred: needsSync() }" style="transition: all 0.5s ease;">
+      <div v-bind:class="{ blurred: needsManualSync() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <div class="row m-0 p-0">
             <div class="col-10 p-0 m-0">
@@ -11,7 +11,7 @@
           </div>
         </div>
 
-        <div class="card-body pt-2 pb-1 px-2">
+        <div class="card-body pt-2 pb-1 px-2" v-bind:class="{ blurred: !order.getPK() }">
           <p class="m-0 order-id user-select-none">Order <span class="user-select-all">{{ order.getPK() }}</span></p>
         </div>
 
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="!order.isPaid() && needsSync()">
+      <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="needsManualSync()">
         <button class="btn btn-primary p-5 d-block shadow" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
   </div>
@@ -66,11 +66,14 @@ export default {
       this.$parent.done();
     },
     updateOrder: function () {
-      this.$parent.updateCurrentOrder();
+      this.$parent.manualOrderSync();
     },
     needsSync: function () {
       return !this.order.synced;
     },
+    needsManualSync: function () {
+      return this.$parent.fetchingTimedOut;
+    }
   },
 }
 </script>
