@@ -118,7 +118,7 @@ jobs:
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-develop.technicie.nl/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_RELEASE: ${{ GITHUB_SHA }}
       VUE_APP_SENTRY_ENVIRONMENT: develop
     environment:
       name: Develop
@@ -187,7 +187,7 @@ jobs:
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-staging.technicie.nl/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_RELEASE: ${{ GITHUB_SHA }}
       VUE_APP_SENTRY_ENVIRONMENT: staging
     environment:
       name: Staging
@@ -234,7 +234,7 @@ jobs:
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin.thalia.nu/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      VUE_APP_SENTRY_RELEASE: ${{ environment.GITHUB_SHA }}
+      VUE_APP_SENTRY_RELEASE: ${{ GITHUB_SHA }}
       VUE_APP_SENTRY_ENVIRONMENT: production
     environment:
       name: Production
