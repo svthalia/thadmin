@@ -1,17 +1,17 @@
 <template>
   <div class="card text-center user-select-none shadow order-card border-0" v-if="order">
-      <div v-bind:class="{ blurred: needsSync(), 'alert-danger': invalidPayer() }" style="transition: all 0.5s ease;">
+      <div v-bind:class="{ blurred: needsManualSync(), 'alert-danger': invalidPayer() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <div class="row m-0 p-0">
             <div class="col-10 p-0 m-0">
               <h6 class="m-0 text-left font-oswald font-weight-normal user-select-none"><span class="user-select-all" v-if="order.getDescription()">{{order.getDescription()}}</span><span v-else class="user-select-none invisible">No order</span></h6>
             </div>
-            <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0"><h6 class="text-right m-0 font-oswald font-weight-normal"><span class="user-select-all">€{{order.getAmount()}}</span></h6>
+            <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0"><h6 class="text-right m-0 font-oswald font-weight-normal"><span class="user-select-all">€{{order.getAmount() !== null ? order.getAmount() : "?"}}</span></h6>
             </div>
           </div>
         </div>
 
-        <div class="card-body pt-2 pb-1 px-2">
+        <div class="card-body pt-2 pb-1 px-2" v-bind:class="{ blurred: !order.getPK() }">
           <p class="m-0 order-id user-select-none">Order <span class="user-select-all">{{ order.getPK() }}</span></p>
         </div>
 
@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="!order.isPaid() && needsSync()">
+      <div class="position-absolute d-flex align-items-center justify-content-center w-100 h-100" v-if="needsManualSync()">
         <button class="btn btn-primary p-5 d-block shadow" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
   </div>
@@ -80,11 +80,14 @@ export default {
       this.$parent.reset();
     },
     updateOrder: function () {
-      this.$parent.updateCurrentOrder();
+      this.$parent.manualOrderSync();
     },
     needsSync: function () {
       return !this.order.synced;
     },
+    needsManualSync: function () {
+      return this.$parent.fetchingTimedOut;
+    }
     invalidPayer: function () {
       return this.order.isAgeRestricted() && this.order.hasPayer() && !this.order.payerIsAdult();
     },
