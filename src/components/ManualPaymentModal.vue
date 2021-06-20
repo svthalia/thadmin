@@ -29,6 +29,9 @@
 
 <script>
 import Order from '@/common/sales.service'
+import SalesService from "@/common/sales.service";
+
+let salesService = new SalesService();
 
 export default {
   name: 'OrderCard',
@@ -41,10 +44,10 @@ export default {
     toggleAgeCheck: function () {
       this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
     },
-    registerPayment: function () {
-      // Register a payment
-      // Refresh the order from server
-     return true;
+    registerPayment: async function () {
+      let result = await salesService.createPayment(this.order, this.paymentMethod);
+      if (result.payment)
+        this.$parent.done()
     }
   },
 }

@@ -87,7 +87,7 @@ export default {
     },
     needsManualSync: function () {
       return this.$parent.fetchingTimedOut;
-    }
+    },
     invalidPayer: function () {
       return this.order.isAgeRestricted() && this.order.hasPayer() && !this.order.payerIsAdult();
     },
