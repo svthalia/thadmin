@@ -175,9 +175,14 @@ class Order {
   }
 
   public getAPIData(): {} {
-    const data = this.items;
+    let data = this.items;
     if (data !== null) {
       data.forEach(i => delete i.total);
+    }
+    if (data === null) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      data = [];
     }
     // eslint-disable-next-line @typescript-eslint/camelcase
     return { order_items: data };
