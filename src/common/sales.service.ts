@@ -11,14 +11,14 @@ class SalesService {
 
   async getShifts(): Promise<[Shift]> {
     const result: AxiosResponse<Paginated<Shift>> = await this.apiService.get(
-      `/sales/shifts/`
+      `/admin/sales/shifts/`
     );
     return result.data.results;
   }
 
   async getShift(shift: number): Promise<Shift> {
     const result: AxiosResponse<Shift> = await this.apiService.get(
-      `/sales/shifts/${shift}/`
+      `/admin/sales/shifts/${shift}/`
     );
     return result.data;
   }
@@ -31,7 +31,7 @@ class SalesService {
       data = order.getAPIData();
     }
     const result: AxiosResponse<_Order> = await this.apiService.post(
-      `/sales/shifts/${shift}/orders/`,
+      `/admin/sales/shifts/${shift}/orders/`,
       data
     ); // TODO this endpoint does not accept all fields, so items are set to 0
     if (order !== null) {
@@ -48,7 +48,7 @@ class SalesService {
     const result: AxiosResponse<_Order> = await this.apiService.put(
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
-      `/sales/orders/${order._o.pk}/`,
+      `/admin/sales/orders/${order._o.pk}/`,
       order.getAPIData() as {}
     );
     order.updateFromAPI(result.data);
@@ -59,7 +59,7 @@ class SalesService {
     const result: AxiosResponse<_Order> = await this.apiService.get(
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
-      `/sales/orders/${order._o.pk}/`
+      `/admin/sales/orders/${order._o.pk}/`
     );
     if (order.synced) {
       order.updateFromAPI(result.data);
@@ -74,7 +74,7 @@ class SalesService {
     return await this.apiService.delete(
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
       // @ts-ignore
-      `/sales/orders/${order._o.pk}/`
+      `/admin/sales/orders/${order._o.pk}/`
     );
   }
 
