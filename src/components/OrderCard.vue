@@ -1,6 +1,6 @@
 <template>
   <div class="card text-center user-select-none shadow order-card border-0" v-if="order">
-      <div v-bind:class="{ blurred: needsManualSync() }" style="transition: all 0.5s ease;">
+      <div v-bind:class="{ blurred: needsManualSync(), 'alert-danger': invalidPayer() }" style="transition: all 0.5s ease;">
         <div class="card-header">
           <div class="row m-0 p-0">
             <div class="col-10 p-0 m-0">
@@ -29,17 +29,25 @@
 
         <div class="card-footer p-1 p-md-2" v-bind:class="{ blurred: needsSync() }">
           <p class="m-0 p-1 user-select-none" style="cursor: default">
-            <span class="user-select-none" v-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
+            <span class="user-select-none" v-if="invalidPayer()">This payer is under-age!</span>
+            <span class="user-select-none" v-else-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
             <span class="user-select-none" v-else-if="order.isPaid()">Paid by anonymous user</span>
             <span class="user-select-none" v-else-if="!order.needsPayment()">No payment required</span>
             <span class="user-select-none" v-else>or register a</span>
           </p>
-          <div class="m-0" v-if="!order.isPaid() && order.needsPayment()">
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"><i class="fas fa-coins"></i> Cash payment</button>
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"><i class="fas fa-credit-card"></i> Card payment</button>
+          <div class="m-0" v-if="invalidPayer()">
+            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="reset()">Delete</button>
+          </div>
+          <div class="m-0" v-else-if="!order.isPaid() && order.needsPayment()">
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#cash-payment-modal"><i class="fas fa-coins"></i> Cash payment</button>
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#card-payment-modal"><i class="fas fa-credit-card"></i> Card payment</button>
           </div>
           <div class="m-0" v-else>
-            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done">Done</button>
+            <div class="mt-1 mb-3" v-if="order.isAgeRestricted() && !order.needsPayment()">
+              <span class="mb-1">This order contains age restricted products.</span>
+              <button type="button" class="btn btn-outline-success py-1 py-md-2 px-5 m-1 font-oswald" v-bind:class="{ 'btn-success text-white': order.ageCheckPerformed }" data-bs-toggle="button" autocomplete="off" aria-pressed="true" @click="toggleAgeCheck">I verified that this person is 18+</button>
+            </div>
+            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done" :disabled="order.isAgeRestricted() && !order.ageCheckPerformed">Done</button>
           </div>
         </div>
       </div>
@@ -47,16 +55,19 @@
         <button class="btn btn-primary p-5 d-block shadow" v-if="order.hasProducts()" v-on:click="updateOrder"><i class="fas fa-sync"></i></button>
       </div>
   </div>
+  <ManualPaymentModal id="cash-payment-modal" paymentMethod="cash" v-bind:order="order"></ManualPaymentModal>
+  <ManualPaymentModal id="card-payment-modal" paymentMethod="card" v-bind:order="order"></ManualPaymentModal>
 </template>
 
 <script>
 import Order from '@/common/sales.service'
 import QrcodeVue from 'qrcode.vue'
+import ManualPaymentModal from "@/components/ManualPaymentModal";
 
 export default {
   name: 'OrderCard',
   components: {
-    QrcodeVue
+    QrcodeVue, ManualPaymentModal
   },
   props: {
     order: Order | null
@@ -64,6 +75,9 @@ export default {
   methods: {
     done: function() {
       this.$parent.done();
+    },
+    reset: function() {
+      this.$parent.reset();
     },
     updateOrder: function () {
       this.$parent.manualOrderSync();
@@ -73,7 +87,13 @@ export default {
     },
     needsManualSync: function () {
       return this.$parent.fetchingTimedOut;
-    }
+    },
+    invalidPayer: function () {
+      return this.order.isAgeRestricted() && this.order.hasPayer() && !this.order.payerIsAdult();
+    },
+    toggleAgeCheck: function () {
+      this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
+    },
   },
 }
 </script>

@@ -34,7 +34,10 @@ class _ApiService {
 
   getAuthorizeRedirectURL(): string {
     const authURL = new URL(this.getAuthorizationUri());
-    authURL.searchParams.append("scope", "profile:read sales:read sales:write");
+    authURL.searchParams.append(
+      "scope",
+      "profile:read sales:read sales:write payments:admin"
+    );
     authURL.searchParams.append("client_id", this.clientId);
     authURL.searchParams.append("redirect_uri", this.redirectUri);
     authURL.searchParams.append("response_type", "token");
@@ -62,6 +65,14 @@ class _ApiService {
 
   async put<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.put(`${this.baseUri}/api/v2${resource}`, data, {
+      headers: {
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`
+      }
+    });
+  }
+
+  async patch<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
+    return axios.patch(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
         Authorization: `Bearer ${store.getters["User/accessToken"]}`
       }

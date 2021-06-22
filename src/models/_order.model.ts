@@ -7,7 +7,7 @@ interface _Order {
   pk: string;
   shift: string | null;
   created_at: string;
-  order_items: [OrderItem] | null;
+  order_items: [OrderItem];
   order_description: string | null;
   age_restricted: boolean | null;
   subtotal: number | null;

@@ -4,7 +4,7 @@
       <div class="card-body user-select-none p-2">
         <div class="row m-0 p-0">
           <div class="col-9 p-0 m-0">
-            <h5 class="card-title font-oswald p-0 m-0">{{ product.name }}</h5>
+            <h5 class="card-title font-oswald p-0 m-0 ">{{ product.name }}</h5>
           </div>
           <div class="col-3 p-0 m-0">
             <h5 class="font-oswald m-0 text-right" style="color: #e62272" v-if="amount>0">{{ amount }}</h5>

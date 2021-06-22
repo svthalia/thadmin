@@ -5,6 +5,7 @@ import Shift from "@/models/shift.model";
 import Order from "@/models/order.model";
 import _Order from "@/models/_order.model";
 import Member from "@/models/member.model";
+import Payable from "@/models/payable.model";
 
 class SalesService {
   apiService = ApiService;
@@ -81,6 +82,18 @@ class SalesService {
   async getAuthorizedUserData(): Promise<Member> {
     const result: AxiosResponse<Member> = await this.apiService.get(
       `/members/me/`
+    );
+    return result.data;
+  }
+
+  async createPayment(order: Order, paymentType: string) {
+    if (order._o === null) {
+      return;
+    }
+    const result: AxiosResponse<Payable> = await this.apiService.patch(
+      `/admin/payments/payables/sales/order/${order._o.pk}/`,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      { payment_type: paymentType + "_payment" }
     );
     return result.data;
   }

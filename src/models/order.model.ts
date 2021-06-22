@@ -6,11 +6,13 @@ class Order {
   items: [OrderItem] | null;
   synced: boolean;
   _o: _Order | null;
+  ageCheckPerformed: boolean;
 
   constructor() {
     this.items = null;
     this.synced = false;
     this._o = null;
+    this.ageCheckPerformed = false;
   }
 
   public getPK(): string | null {
@@ -41,6 +43,10 @@ class Order {
     return "#";
   }
 
+  public isAgeRestricted(): boolean {
+    return this._o?.age_restricted === true;
+  }
+
   public isPaid(): boolean {
     return !!this._o?.payment;
   }
@@ -65,6 +71,16 @@ class Order {
       return this._o?.payer?.profile.photo.medium;
     }
     return null;
+  }
+
+  public payerIsAdult(): boolean {
+    if (this._o?.payer && this._o?.payer.profile.birthday) {
+      const birthDate = new Date(this._o?.payer.profile.birthday);
+      const date = new Date();
+      date.setFullYear(date.getFullYear() - 18);
+      return birthDate <= date;
+    }
+    return true;
   }
 
   public hasProducts(): boolean {
@@ -159,9 +175,14 @@ class Order {
   }
 
   public getAPIData(): {} {
-    const data = this.items;
+    let data = this.items;
     if (data !== null) {
       data.forEach(i => delete i.total);
+    }
+    if (data === null) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      data = [];
     }
     // eslint-disable-next-line @typescript-eslint/camelcase
     return { order_items: data };
