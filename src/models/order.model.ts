@@ -52,7 +52,7 @@ class Order {
   }
 
   public needsPayment(): boolean {
-    return this.getAmount() !== 0;
+    return this.getAmount() != 0;
   }
 
   public hasPayer(): boolean {

@@ -51,7 +51,9 @@ export default {
       if (this.order === null) {
         this.nextOrder();
       }
-      await salesService.updateOrder(this.order, parseInt(this.shiftId)).then((order) => (this.order = order));
+      if (this.order.hasProducts()) {
+        await salesService.updateOrder(this.order, parseInt(this.shiftId)).then((order) => (this.order = order));
+      }
     },
     fetchOrderUpdates: async function() {
       await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
