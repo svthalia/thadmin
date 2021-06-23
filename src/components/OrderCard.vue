@@ -22,7 +22,7 @@
               <img class="image-fill" v-else src="@/assets/images/anonymousUser.jpg" alt="anonymous user" >
             </div>
             <a v-else style="cursor: default" :href="order.getPaymentUrl()" target="_blank" onclick="return false;">
-              <qrcode-vue class="image-fill" v-bind:class="{ blurred: needsSync() || !order.needsPayment() }" v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
+              <qrcode-vue class="image-fill" v-bind:class="{ blurred: needsSync() || (!order.needsPayment() && (!order.isAgeRestricted() || (order.isAgeRestricted && order.ageCheckPerformed))) }" v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
             </a>
           </div>
         </div>
@@ -39,15 +39,15 @@
             <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="reset()">Delete</button>
           </div>
           <div class="m-0" v-else-if="!order.isPaid() && order.needsPayment()">
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#cash-payment-modal"><i class="fas fa-coins"></i> Cash payment</button>
-            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#card-payment-modal"><i class="fas fa-credit-card"></i> Card payment</button>
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#cash-payment-modal" :disabled="needsSync()"><i class="fas fa-coins"></i> Cash payment</button>
+            <button class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald" data-toggle="modal" data-target="#card-payment-modal" :disabled="needsSync()"><i class="fas fa-credit-card"></i> Card payment</button>
           </div>
           <div class="m-0" v-else>
             <div class="mt-1 mb-3" v-if="order.isAgeRestricted() && !order.needsPayment()">
               <span class="mb-1">This order contains age restricted products.</span>
               <button type="button" class="btn btn-outline-success py-1 py-md-2 px-5 m-1 font-oswald" v-bind:class="{ 'btn-success text-white': order.ageCheckPerformed }" data-bs-toggle="button" autocomplete="off" aria-pressed="true" @click="toggleAgeCheck">I verified that this person is 18+</button>
             </div>
-            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done" :disabled="order.isAgeRestricted() && !order.ageCheckPerformed">Done</button>
+            <button class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald" v-on:click="done" :disabled="(order.isAgeRestricted() && !order.ageCheckPerformed && !order.needsPayment()) || needsSync()">Done</button>
           </div>
         </div>
       </div>
