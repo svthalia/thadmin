@@ -36,7 +36,7 @@ class _ApiService {
     const authURL = new URL(this.getAuthorizationUri());
     authURL.searchParams.append(
       "scope",
-      "profile:read sales:read sales:write payments:admin"
+      "profile:read sales:admin payments:admin"
     );
     authURL.searchParams.append("client_id", this.clientId);
     authURL.searchParams.append("redirect_uri", this.redirectUri);
