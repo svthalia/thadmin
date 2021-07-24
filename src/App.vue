@@ -21,22 +21,22 @@ Sentry.init({
   environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
   integrations: [new Integrations.BrowserTracing()],
   tracingOptions: {
-    trackComponents: true,
-  },
+    trackComponents: true
+  }
 });
 
 export default {
   name: "App",
   components: {
-    Header,
+    Header
   },
   data() {
     return {
       pageBackground: {
-        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`,
-      },
+        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`
+      }
     };
-  },
+  }
 };
 </script>
 
@@ -60,27 +60,34 @@ export default {
   color: inherit;
   text-decoration: inherit;
 }
-
+body {
+  overscroll-behavior: none;
+}
+.page-container {
+  overscroll-behavior: contain;
+}
 .background-container {
   position: fixed;
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
   overflow: hidden;
+  overscroll-behavior: none;
   z-index: -10;
 }
 .background-image {
-  height: 110%;
-  width: 110%;
+  height: 110vh;
+  width: 110vw;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left;
-  background-attachment: fixed;
+  background-attachment: scroll;
   filter: blur(10px);
   transform: scale(1.2);
   opacity: 0.3;
   z-index: -10;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
-
 #app {
   font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
