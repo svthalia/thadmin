@@ -172,6 +172,10 @@ class Order {
     this.synced = true;
     this._o = o;
     this.items = o.order_items;
+
+    if (this.hasPayer() && this.payerIsAdult()) {
+      this.ageCheckPerformed = true;
+    }
   }
 
   public getAPIData(): {} {
