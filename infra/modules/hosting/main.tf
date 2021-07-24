@@ -20,6 +20,14 @@ resource "aws_s3_bucket" "this" {
   acl           = "private"
   force_destroy = "true"
 
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
+    allowed_origins = ["*"]
+    expose_headers  = ["ETag", "Content-Type", "Accept"]
+    max_age_seconds = 3000
+  }
+
   tags = var.tags
 }
 
