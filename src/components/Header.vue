@@ -91,5 +91,4 @@ export default {
 .memberProfileImage {
   border-radius: 50%;
 }
-
 </style>

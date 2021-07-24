@@ -1,8 +1,8 @@
 <template>
   <router-link class="link-unstyled" :to="{ name: 'Shift', params: { shiftId: shift.pk } }">
     <div class="card-header">
-      <h2 class="card-title font-oswald">Shift {{ shift.pk }}</h2>
-      <p class="card-subtitle"><span v-if="shift.title">{{ shift.title }} •</span> From {{ start_end_time() }}</p>
+      <h2 class="card-title font-oswald"><span v-if="shift.title">{{ shift.title }}</span><span v-else>Shift {{ shift.pk }}</span></h2>
+      <p class="card-subtitle">{{ start_end_time() }}<span v-if="shift.title"> • Shift #{{ shift.pk }}</span></p>
     </div>
     <div class="card-body">
       <p class="font-weight-bold">Amount of orders: {{ shift.num_orders }}</p>
