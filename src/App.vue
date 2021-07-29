@@ -155,4 +155,8 @@ body {
   overflow-y: scroll;
   z-index: 10;
 }
+
+.user-select-none {
+  cursor: default;
+}
 </style>

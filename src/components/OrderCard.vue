@@ -21,14 +21,14 @@
               <img class="image-fill" v-if="order.hasPayer()" :src="order.getPayerImage()" :alt="order.getPayer()">
               <img class="image-fill" v-else src="@/assets/images/anonymousUser.jpg" alt="anonymous user" >
             </div>
-            <a v-else style="cursor: default" :href="order.getPaymentUrl()" target="_blank" onclick="return false;">
+            <a v-else :href="order.getPaymentUrl()" target="_blank" onclick="return false;">
               <qrcode-vue class="image-fill" v-bind:class="{ blurred: needsSync() || (!order.needsPayment() && (!order.isAgeRestricted() || (order.isAgeRestricted && order.ageCheckPerformed))) }" v-bind:value="order.getPaymentUrl()" v-bind:size="1024" renderAs="svg" level="M" />
             </a>
           </div>
         </div>
 
         <div class="card-footer p-1 p-md-2" v-bind:class="{ blurred: needsSync() }">
-          <p class="m-0 p-1 user-select-none" style="cursor: default">
+          <p class="m-0 p-1 user-select-none">
             <span class="user-select-none" v-if="invalidPayer()">This payer is under-age!</span>
             <span class="user-select-none" v-else-if="order.isPaid() && order.hasPayer()">Paid by <span class="user-select-all">{{ order.getPayer() }}</span></span>
             <span class="user-select-none" v-else-if="order.isPaid()">Paid by anonymous user</span>

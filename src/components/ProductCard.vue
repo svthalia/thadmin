@@ -1,7 +1,7 @@
 <template>
   <div class="square-wrapper">
-    <div class="card square border-0 p-0 shadow user-select-none" :class="{ 'show-pointer': !paid }" v-on="!paid ? { click: increment } : {}">
-      <div class="card-body user-select-none p-2">
+    <div class="card square border-0 p-0 shadow user-select-none" :class="{ 'hide-pointer': paid }" v-on="!paid ? { click: increment } : {}">
+      <div class="card-body p-2">
         <div class="row m-0 p-0">
           <div class="col-9 p-0 m-0">
             <h5 class="card-title font-oswald p-0 m-0 ">{{ product.name }}</h5>
@@ -74,9 +74,6 @@ p {
 button {
   border-radius: 0;
 }
-.show-pointer {
-  cursor: pointer;
-}
 
 .square-wrapper {
   position: relative;
@@ -100,6 +97,12 @@ button {
 }
 .disabled {
   visibility: hidden;
+}
+.user-select-none {
+  cursor: pointer;
+}
+.hide-pointer {
+  cursor: default!important;
 }
 
 </style>
