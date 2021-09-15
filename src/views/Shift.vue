@@ -1,16 +1,37 @@
 <template>
-  <div class="progress" style="height: 5px; border-radius: 0;">
-    <div class="progress-bar" role="progressbar" :style="{ maxWidth: '100%', width: shiftProgress + '%' }" :aria-valuenow="shiftProgress" aria-valuemin="0" aria-valuemax="100"></div>
+  <div class="progress" style="height: 5px; border-radius: 0">
+    <div
+      class="progress-bar"
+      role="progressbar"
+      :style="{ maxWidth: '100%', width: shiftProgress + '%' }"
+      :aria-valuenow="shiftProgress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    ></div>
   </div>
   <div class="container mt-2 mt-md-4 mb-2">
-    <div class="alert alert-info mt-2 user-select-none" style="cursor: default" role="alert" v-if="shiftProgress>=100">
-      This shift has ended. However, as long as the shift has not yet been locked, you can still process orders.
+    <div
+      class="alert alert-info mt-2 user-select-none"
+      style="cursor: default"
+      role="alert"
+      v-if="shiftProgress >= 100"
+    >
+      This shift has ended. However, as long as the shift has not yet been
+      locked, you can still process orders.
     </div>
     <div class="row flex-column-reverse flex-md-row px-2" v-if="shift">
       <div class="products-wrapper col-md-7">
         <div class="product-cards row row-cols-3 row-cols-lg-4">
-          <div class="col p-1 p-sm-2" v-for="product in shift.products" :key="product">
-            <ProductCard :key="product.name" v-bind:product="product" v-bind:order="order"></ProductCard>
+          <div
+            class="col p-1 p-sm-2"
+            v-for="product in shift.products"
+            :key="product"
+          >
+            <ProductCard
+              :key="product.name"
+              v-bind:product="product"
+              v-bind:order="order"
+            ></ProductCard>
           </div>
         </div>
       </div>
@@ -34,11 +55,11 @@ import Loader from "@/components/Loader";
 let salesService = new SalesService();
 
 export default {
-  name: 'ShiftConsole',
+  name: "ShiftConsole",
   components: {
     OrderCard,
     ProductCard,
-    Loader
+    Loader,
   },
   props: {
     shiftId: String,
@@ -52,20 +73,26 @@ export default {
         this.nextOrder();
       }
       if (this.order.hasProducts()) {
-        await salesService.updateOrder(this.order, parseInt(this.shiftId)).then((order) => (this.order = order));
+        await salesService
+          .updateOrder(this.order, parseInt(this.shiftId))
+          .then((order) => (this.order = order));
       }
     },
-    fetchOrderUpdates: async function() {
-      await salesService.getOrderDetails(this.order).then((order) => {if (this.order.getPK() === order._o.pk) {this.order = order}});
+    fetchOrderUpdates: async function () {
+      await salesService.getOrderDetails(this.order).then((order) => {
+        if (this.order.getPK() === order._o.pk) {
+          this.order = order;
+        }
+      });
     },
-    fetchShiftUpdates: async function() {
+    fetchShiftUpdates: async function () {
       this.shift = await salesService.getShift(this.shiftId);
     },
     recalculateProgress: function () {
       const now = new Date();
       const shiftStart = new Date(this.shift.start);
       const shiftEnd = new Date(this.shift.end);
-      this.shiftProgress = ((now - shiftStart) / (shiftEnd - shiftStart) * 100);
+      this.shiftProgress = ((now - shiftStart) / (shiftEnd - shiftStart)) * 100;
     },
     done: function () {
       this.order = new Order();
@@ -76,77 +103,93 @@ export default {
     },
     startFetching: function () {
       this.fetchingTimedOut = false;
-      this.fetchOrderUpdatesInterval = setInterval(this.fetchOrderUpdates, 2000);
-      this.stopFetchingTimer = setTimeout(() => {this.fetchingTimedOut=true; clearInterval(this.fetchOrderUpdatesInterval)}, 20000)
+      this.fetchOrderUpdatesInterval = setInterval(
+        this.fetchOrderUpdates,
+        2000
+      );
+      this.stopFetchingTimer = setTimeout(() => {
+        this.fetchingTimedOut = true;
+        clearInterval(this.fetchOrderUpdatesInterval);
+      }, 20000);
     },
     manualOrderSync: function () {
       this.updateCurrentOrder();
       this.startFetching();
     },
     deleteIfOrphan: function () {
-      if (!this.order.isPaid())
-        salesService.deleteOrder(this.order);
-    }
+      if (!this.order.isPaid()) salesService.deleteOrder(this.order);
+    },
   },
-  data () {
+  data() {
     return {
       shift: null,
       order: null,
       shiftProgress: 0,
-      fetchingTimedOut: false
-    }
+      fetchingTimedOut: false,
+    };
   },
   computed: {
     awaitingPayment: function () {
-      return this.order !== null && this.order._o && this.order.synced && !this.order._o.payment;
-    }
+      return (
+        this.order !== null &&
+        this.order._o &&
+        this.order.synced &&
+        !this.order._o.payment
+      );
+    },
   },
   watch: {
     order: {
       handler(val) {
         clearTimeout(this.orderSyncTimer);
-        if (this.awaitingPayment)
-          return
+        if (this.awaitingPayment) return;
         this.orderSyncTimer = setTimeout(this.updateCurrentOrder, 500);
       },
-      deep: true
+      deep: true,
     },
     shift: {
       handler(_) {
-        this.recalculateProgress()
+        this.recalculateProgress();
       },
-      deep: true
+      deep: true,
     },
     awaitingPayment: function (val) {
       clearInterval(this.fetchOrderUpdatesInterval);
       clearTimeout(this.stopFetchingTimer);
-      this.fetchingTimedOut=false
+      this.fetchingTimedOut = false;
       if (val) {
         this.startFetching();
       }
     },
   },
   beforeMount() {
-    window.addEventListener("beforeunload", this.deleteIfOrphan)
+    window.addEventListener("beforeunload", this.deleteIfOrphan);
   },
-  mounted () {
+  mounted() {
     this.nextOrder();
-    salesService.getShift(parseInt(this.shiftId)).then((shift) => {this.shift = shift; this.recalculateProgress()});
+    salesService.getShift(parseInt(this.shiftId)).then((shift) => {
+      this.shift = shift;
+      this.recalculateProgress();
+    });
     this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
     this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
-  unmounted () {
+  unmounted() {
     clearInterval(this.fetchOrderUpdatesInterval);
     clearInterval(this.fetchShiftInterval);
     clearInterval(this.progressInterval);
     clearTimeout(this.stopFetchingTimer);
     this.deleteIfOrphan();
-  }
-}
+  },
+};
 </script>
 
 <style>
-button, .card, .card-header, .card-body, .card-footer{
+button,
+.card,
+.card-header,
+.card-body,
+.card-footer {
   border-radius: 0 !important;
 }
 </style>

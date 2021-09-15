@@ -1,22 +1,55 @@
 <template>
   <div class="square-wrapper">
-    <div class="card square border-0 p-0 shadow user-select-none" :class="{ 'hide-pointer': paid }" v-on="!paid ? { click: increment } : {}">
+    <div
+      class="card square border-0 p-0 shadow user-select-none"
+      :class="{ 'hide-pointer': paid }"
+      v-on="!paid ? { click: increment } : {}"
+    >
       <div class="card-body p-2">
         <div class="row m-0 p-0">
           <div class="col-9 p-0 m-0">
-            <h5 class="card-title font-oswald p-0 m-0 ">{{ product.name }}</h5>
+            <h5 class="card-title font-oswald p-0 m-0">{{ product.name }}</h5>
           </div>
           <div class="col-3 p-0 m-0">
-            <h5 class="font-oswald m-0 text-right" style="color: #e62272" v-if="amount>0">{{ amount }}</h5>
+            <h5
+              class="font-oswald m-0 text-right"
+              style="color: #e62272"
+              v-if="amount > 0"
+            >
+              {{ amount }}
+            </h5>
           </div>
         </div>
-        <p class="price p-0 m-0">€{{ product.price }} <span v-if="product.age_restricted">• 18+</span></p>
+        <p class="price p-0 m-0">
+          €{{ product.price }} <span v-if="product.age_restricted">• 18+</span>
+        </p>
       </div>
       <div class="card-footer bg-white p-0 border-0">
         <div class="d-flex align-content-stretch align-items-stretch">
-          <button v-on:click.stop class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: del } : {}"><i class="fas fa-trash"></i></button>
-          <button v-on:click.stop class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': amount<=0 || paid }" v-on="amount>0 & !paid ? { click: decrement } : {}"><i class="fas fa-minus"></i></button>
-          <button v-on:click.stop class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white" :class="{ 'disabled': paid }" v-on="!paid ? { click: increment } : {}"><i class="fas fa-plus"></i></button>
+          <button
+            v-on:click.stop
+            class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white"
+            :class="{ disabled: amount <= 0 || paid }"
+            v-on="(amount > 0) & !paid ? { click: del } : {}"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+          <button
+            v-on:click.stop
+            class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white"
+            :class="{ disabled: amount <= 0 || paid }"
+            v-on="(amount > 0) & !paid ? { click: decrement } : {}"
+          >
+            <i class="fas fa-minus"></i>
+          </button>
+          <button
+            v-on:click.stop
+            class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
+            :class="{ disabled: paid }"
+            v-on="!paid ? { click: increment } : {}"
+          >
+            <i class="fas fa-plus"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -34,17 +67,21 @@ export default {
     order: Order,
   },
   computed: {
-    amount: function() {
-      if (this.order) {return this.order.productAmount(this.product);}
+    amount: function () {
+      if (this.order) {
+        return this.order.productAmount(this.product);
+      }
       return 0;
     },
-    paid: function() {
-      if (this.order) {return this.order.isPaid();}
+    paid: function () {
+      if (this.order) {
+        return this.order.isPaid();
+      }
       return false;
-    }
+    },
   },
   methods: {
-    itemsInBasked: function() {
+    itemsInBasked: function () {
       return this.amount > 0;
     },
     increment() {
@@ -61,15 +98,15 @@ export default {
       if (!this.order.hasProducts()) {
         this.$parent.reset();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 p {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 button {
   border-radius: 0;
@@ -102,7 +139,6 @@ button {
   cursor: pointer;
 }
 .hide-pointer {
-  cursor: default!important;
+  cursor: default !important;
 }
-
 </style>
