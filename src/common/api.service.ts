@@ -50,40 +50,40 @@ class _ApiService {
   async get<T>(resource: string): Promise<AxiosResponse<T>> {
     return axios.get(`${this.baseUri}/api/v2${resource}`, {
       headers: {
-        Authorization: `Bearer ${store.getters["User/accessToken"]}`
-      }
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`,
+      },
     });
   }
 
   async post<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.post(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
-        Authorization: `Bearer ${store.getters["User/accessToken"]}`
-      }
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`,
+      },
     });
   }
 
   async put<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.put(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
-        Authorization: `Bearer ${store.getters["User/accessToken"]}`
-      }
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`,
+      },
     });
   }
 
   async patch<T>(resource: string, data: object): Promise<AxiosResponse<T>> {
     return axios.patch(`${this.baseUri}/api/v2${resource}`, data, {
       headers: {
-        Authorization: `Bearer ${store.getters["User/accessToken"]}`
-      }
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`,
+      },
     });
   }
 
   async delete<T>(resource: string): Promise<AxiosResponse<T>> {
     return axios.delete(`${this.baseUri}/api/v2${resource}`, {
       headers: {
-        Authorization: `Bearer ${store.getters["User/accessToken"]}`
-      }
+        Authorization: `Bearer ${store.getters["User/accessToken"]}`,
+      },
     });
   }
 

@@ -92,7 +92,7 @@ class Order {
       return null;
     }
     const item: OrderItem | undefined = this.items.filter(
-      item => item.product === product.name
+      (item) => item.product === product.name
     )[0];
     if (item === undefined) {
       return null;
@@ -106,7 +106,7 @@ class Order {
       const orderItem = {
         product: product.name,
         amount: 1,
-        total: product.price
+        total: product.price,
       };
       // eslint-disable-next-line @typescript-eslint/camelcase
       this.items = [orderItem];
@@ -116,7 +116,7 @@ class Order {
         orderItem = {
           product: product.name,
           amount: 1,
-          total: product.price
+          total: product.price,
         };
         this.items.push(orderItem);
       } else {
@@ -133,7 +133,9 @@ class Order {
         this.synced = false;
         orderItem.amount--;
         if (orderItem.amount === 0) {
-          this.items = this.items.filter(item => item.product !== product.name);
+          this.items = this.items.filter(
+            (item) => item.product !== product.name
+          );
         }
         orderItem.total = product.price * orderItem.amount;
       }
@@ -148,7 +150,7 @@ class Order {
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/camelcase
-        this.items = this.items.filter(item => item.product !== product.name);
+        this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
   }
@@ -178,7 +180,7 @@ class Order {
   public getAPIData(): {} {
     let data = this.items;
     if (data !== null) {
-      data.forEach(i => delete i.total);
+      data.forEach((i) => delete i.total);
     }
     if (data === null) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

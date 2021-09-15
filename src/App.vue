@@ -21,22 +21,22 @@ Sentry.init({
   environment: process.env.VUE_APP_SENTRY_ENVIRONMENT,
   integrations: [new Integrations.BrowserTracing()],
   tracingOptions: {
-    trackComponents: true
-  }
+    trackComponents: true,
+  },
 });
 
 export default {
   name: "App",
   components: {
-    Header
+    Header,
   },
   data() {
     return {
       pageBackground: {
-        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`
-      }
+        backgroundImage: `url(${require("@/assets/images/backgroundImage.jpg")})`,
+      },
     };
-  }
+  },
 };
 </script>
 

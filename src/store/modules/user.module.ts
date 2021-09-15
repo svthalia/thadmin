@@ -30,12 +30,7 @@ class UserModule extends VuexModule {
 
   @Action
   newRandomState() {
-    this.context.commit(
-      "setState",
-      Math.random()
-        .toString()
-        .substr(2, 8)
-    );
+    this.context.commit("setState", Math.random().toString().substr(2, 8));
   }
 
   @Mutation
@@ -79,7 +74,7 @@ class UserModule extends VuexModule {
         accessToken,
         expires,
         tokenType,
-        scope
+        scope,
       });
       return true;
     } else {
@@ -100,7 +95,7 @@ class UserModule extends VuexModule {
       accessToken: accessToken,
       expires: expires,
       tokenType: tokenType,
-      scope: scope
+      scope: scope,
     };
   }
 }

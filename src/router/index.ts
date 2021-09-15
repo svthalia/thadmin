@@ -10,8 +10,8 @@ const routes: Array<RouteRecordRaw> = [
     name: "Index",
     component: Index,
     meta: {
-      requiresAuth: false
-    }
+      requiresAuth: false,
+    },
   },
   {
     path: "/shifts/:shiftId",
@@ -19,34 +19,34 @@ const routes: Array<RouteRecordRaw> = [
     component: Shift,
     props: true,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
   {
     path: "/shifts",
     name: "Shifts",
     component: Shifts,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
   {
     path: "/auth/callback",
     name: "OAuth Authorization",
-    component: () => import("../views/Authorize.vue")
-  }
+    component: () => import("../views/Authorize.vue"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.getters["User/isLoggedIn"]) {
       next({
-        name: "Index"
+        name: "Index",
       });
     } else {
       next();
