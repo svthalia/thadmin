@@ -7,8 +7,8 @@ export default interface Shift {
   active: boolean;
   start: string;
   end: string;
-  products: [Product];
+  products: Product[];
   total_revenue: number;
   num_orders: number;
-  product_sales: {};
+  product_sales: Record<string, number>;
 }
