@@ -1,7 +1,7 @@
 interface OrderItem {
   product: string;
   amount: number;
-  total: number | null;
+  total?: number | null;
 }
 
 export default OrderItem;

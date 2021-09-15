@@ -3,7 +3,7 @@ import OrderItem from "@/models/orderitem.model";
 import _Order from "@/models/_order.model";
 
 class Order {
-  items: [OrderItem] | null;
+  items: OrderItem[] | null;
   synced: boolean;
   _o: _Order | null;
   ageCheckPerformed: boolean;
@@ -133,9 +133,6 @@ class Order {
         this.synced = false;
         orderItem.amount--;
         if (orderItem.amount === 0) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-          // @ts-ignore
-          // eslint-disable-next-line @typescript-eslint/camelcase
           this.items = this.items.filter(item => item.product !== product.name);
         }
         orderItem.total = product.price * orderItem.amount;

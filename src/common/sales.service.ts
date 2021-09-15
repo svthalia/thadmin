@@ -10,7 +10,7 @@ import Payable from "@/models/payable.model";
 class SalesService {
   apiService = ApiService;
 
-  async getShifts(): Promise<[Shift]> {
+  async getShifts(): Promise<Shift[]> {
     const result: AxiosResponse<Paginated<Shift>> = await this.apiService.get(
       `/admin/sales/shifts/`
     );

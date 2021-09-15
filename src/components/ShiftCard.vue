@@ -7,8 +7,8 @@
       <div class="card-body">
         <p class="font-weight-bold">Amount of orders: {{ shift.num_orders }}</p>
         <ul>
-          <li v-for="(amount, product) in shift.product_sales">
-            {{ product }}: {{ amount }}x
+          <li v-for="(amount, product) in shift.product_sales" v-bind:key="product">
+            {{ product }}: {{ amount }}
           </li>
         </ul>
       </div>
