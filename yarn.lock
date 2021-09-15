@@ -7205,10 +7205,10 @@ q@^1.1.2:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qrcode.vue@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/qrcode.vue/-/qrcode.vue-3.3.0.tgz#2842b0b6d1a9457732b8a0e26e50889d7c46981b"
-  integrity sha512-pLBm1cY/NgWz/NUN3+yO04KyC11P6inxyeThUWvrEYq8my45fnVSZy3PIiNPlaPbMHra0oItOKw912hFQy3zww==
+qrcode.vue@3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/qrcode.vue/-/qrcode.vue-3.3.2.tgz#eba36b1abd0acd83425fa3cb3738dda17feb547d"
+  integrity sha512-XnF78pPxx32mOR3ySA4zLlJ22BfBP6h7cDuE+VhPF1vnETN5D2YvR4FkzQ8eU2HkjSjfNREmCVZ5OJjmDQzuAA==
 
 qs@6.7.0:
   version "6.7.0"
