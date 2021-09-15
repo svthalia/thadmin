@@ -44,7 +44,12 @@
         v-bind:class="{ blurred: !order.getPK() }"
       >
         <p class="m-0 order-id user-select-none">
-          Order <span class="user-select-all">{{ order.getPK() }}</span>
+          Order <span class="user-select-all">{{ order.getPK() }}</span
+          ><i
+            class="far fa-trash-alt ml-2"
+            v-if="order.hasProducts() && !order.isPaid()"
+            v-on:click="reset()"
+          ></i>
         </p>
       </div>
 
@@ -107,6 +112,10 @@
           >
           <span class="user-select-none" v-else-if="!order.needsPayment()"
             >No payment required</span
+          >
+          <span class="user-select-none" v-else-if="order.hasPayer()"
+            >Order claimed by
+            <span class="user-select-all">{{ order.getPayer() }}</span></span
           >
           <span class="user-select-none" v-else>or register a</span>
         </p>

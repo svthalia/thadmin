@@ -75,7 +75,7 @@ export default {
     },
     paid: function () {
       if (this.order) {
-        return this.order.isPaid();
+        return this.order.isPaid() || this.order.hasPayer();
       }
       return false;
     },

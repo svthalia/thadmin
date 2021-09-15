@@ -73,20 +73,42 @@ export default {
         this.nextOrder();
       }
       if (this.order.hasProducts()) {
-        await salesService
-          .updateOrder(this.order, parseInt(this.shiftId))
-          .then((order) => (this.order = order));
+        clearTimeout(this.fetchOrder);
+        this.order = await salesService.updateOrder(
+          this.order,
+          parseInt(this.shiftId)
+        );
+        this.fetchOrder = setTimeout(
+          this.fetchOrderUpdates,
+          this.ORDER_REFRESH_RATE
+        );
       }
+      this.updateOrderToServer = null;
     },
     fetchOrderUpdates: async function () {
-      await salesService.getOrderDetails(this.order).then((order) => {
-        if (this.order.getPK() === order._o.pk) {
-          this.order = order;
-        }
-      });
+      if (this.orderBeingUpdated || this.updateOrderToServer != null) {
+        // Do not GET if we're waiting for the response of a PUT
+        this.fetchOrder = setTimeout(
+          this.fetchOrderUpdates,
+          this.ORDER_REFRESH_RATE
+        );
+        return;
+      }
+      const order = await salesService.getOrderDetails(this.order);
+      if (this.order.getPK() === order._o.pk) {
+        this.order = order;
+      }
+      this.fetchOrder = setTimeout(
+        this.fetchOrderUpdates,
+        this.ORDER_REFRESH_RATE
+      );
     },
     fetchShiftUpdates: async function () {
-      this.shift = await salesService.getShift(this.shiftId);
+      this.shift = await salesService.getShift(parseInt(this.shiftId));
+      this.fetchShift = setTimeout(
+        this.fetchShiftUpdates,
+        this.SHIFT_REFRESH_RATE
+      );
     },
     recalculateProgress: function () {
       const now = new Date();
@@ -98,19 +120,27 @@ export default {
       this.order = new Order();
     },
     reset: function () {
+      if (this.orderBeingUpdated) {
+        return;
+      }
+      clearTimeout(this.fetchOrder);
+      clearTimeout(this.updateOrderToServer);
+      this.updateOrderToServer = null;
       salesService.deleteOrder(this.order);
       this.order = new Order();
     },
     startFetching: function () {
-      this.fetchingTimedOut = false;
-      this.fetchOrderUpdatesInterval = setInterval(
+      clearTimeout(this.fetchOrder);
+      this.fetchOrder = setTimeout(
         this.fetchOrderUpdates,
-        2000
+        this.ORDER_REFRESH_RATE
       );
+      this.fetchingTimedOut = false;
+      clearTimeout(this.stopFetchingTimer);
       this.stopFetchingTimer = setTimeout(() => {
         this.fetchingTimedOut = true;
-        clearInterval(this.fetchOrderUpdatesInterval);
-      }, 20000);
+        clearTimeout(this.fetchOrder);
+      }, this.ORDER_REFRESH_TIMEOUT);
     },
     manualOrderSync: function () {
       this.updateCurrentOrder();
@@ -122,10 +152,16 @@ export default {
   },
   data() {
     return {
+      ORDER_REFRESH_WAIT: 1000,
+      ORDER_REFRESH_RATE: 2000,
+      ORDER_REFRESH_TIMEOUT: 30000,
+      SHIFT_REFRESH_RATE: 30000,
       shift: null,
       order: null,
       shiftProgress: 0,
       fetchingTimedOut: false,
+      updateOrderToServer: null,
+      orderBeingUpdated: false,
     };
   },
   computed: {
@@ -141,9 +177,13 @@ export default {
   watch: {
     order: {
       handler(val) {
-        clearTimeout(this.orderSyncTimer);
+        clearTimeout(this.updateOrderToServer);
+        clearTimeout(this.stopFetchingTimer);
         if (this.awaitingPayment) return;
-        this.orderSyncTimer = setTimeout(this.updateCurrentOrder, 500);
+        this.updateOrderToServer = setTimeout(
+          this.updateCurrentOrder,
+          this.ORDER_REFRESH_WAIT
+        );
       },
       deep: true,
     },
@@ -154,7 +194,6 @@ export default {
       deep: true,
     },
     awaitingPayment: function (val) {
-      clearInterval(this.fetchOrderUpdatesInterval);
       clearTimeout(this.stopFetchingTimer);
       this.fetchingTimedOut = false;
       if (val) {
@@ -166,18 +205,13 @@ export default {
     window.addEventListener("beforeunload", this.deleteIfOrphan);
   },
   mounted() {
+    this.fetchShiftUpdates();
     this.nextOrder();
-    salesService.getShift(parseInt(this.shiftId)).then((shift) => {
-      this.shift = shift;
-      this.recalculateProgress();
-    });
-    this.fetchShiftInterval = setInterval(this.fetchShiftUpdates, 20000);
-    this.progressInterval = setInterval(this.recalculateProgress, 5000);
   },
   unmounted() {
-    clearInterval(this.fetchOrderUpdatesInterval);
-    clearInterval(this.fetchShiftInterval);
-    clearInterval(this.progressInterval);
+    clearTimeout(this.updateOrderToServer);
+    clearTimeout(this.fetchOrder);
+    clearTimeout(this.fetchShift);
     clearTimeout(this.stopFetchingTimer);
     this.deleteIfOrphan();
   },
