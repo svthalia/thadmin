@@ -78,25 +78,17 @@ export default {
           this.order,
           parseInt(this.shiftId)
         );
-        this.fetchOrder = setTimeout(
-          this.fetchOrderUpdates,
-          this.ORDER_REFRESH_RATE
-        );
       }
       this.updateOrderToServer = null;
     },
     fetchOrderUpdates: async function () {
-      if (this.orderBeingUpdated || this.updateOrderToServer != null) {
+      if (this.order.isPaid()) return;
+      if (!(this.orderBeingUpdated || this.updateOrderToServer != null)) {
         // Do not GET if we're waiting for the response of a PUT
-        this.fetchOrder = setTimeout(
-          this.fetchOrderUpdates,
-          this.ORDER_REFRESH_RATE
-        );
-        return;
-      }
-      const order = await salesService.getOrderDetails(this.order);
-      if (this.order.getPK() === order._o.pk) {
-        this.order = order;
+        const order = await salesService.getOrderDetails(this.order);
+        if (this.order.getPK() === order._o.pk) {
+          this.order = order;
+        }
       }
       this.fetchOrder = setTimeout(
         this.fetchOrderUpdates,
@@ -120,14 +112,14 @@ export default {
       this.order = new Order();
     },
     reset: function () {
-      if (this.orderBeingUpdated) {
+      if (this.orderBeingUpdated || this.updateOrderToServer != null) {
         return;
       }
       clearTimeout(this.fetchOrder);
       clearTimeout(this.updateOrderToServer);
       this.updateOrderToServer = null;
       salesService.deleteOrder(this.order);
-      this.order = new Order();
+      this.nextOrder();
     },
     startFetching: function () {
       clearTimeout(this.fetchOrder);
@@ -178,8 +170,9 @@ export default {
     order: {
       handler(val) {
         clearTimeout(this.updateOrderToServer);
-        clearTimeout(this.stopFetchingTimer);
         if (this.awaitingPayment) return;
+        if (this.order.isPaid()) return;
+        if (!this.order.hasProducts()) return;
         this.updateOrderToServer = setTimeout(
           this.updateCurrentOrder,
           this.ORDER_REFRESH_WAIT
