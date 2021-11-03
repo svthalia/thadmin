@@ -9,8 +9,8 @@
     "fmt": "prettier ./*.{js,json} src/**/*.{ts,vue} --write"
   },
   "dependencies": {
-    "@sentry/tracing": "6.13.3",
-    "@sentry/vue": "6.13.3",
+    "@sentry/tracing": "6.14.0",
+    "@sentry/vue": "6.14.0",
     "axios": "0.24.0",
     "bootstrap": "4.6.1",
     "bootstrap-vue": "2.21.2",
