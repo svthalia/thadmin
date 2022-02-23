@@ -17,8 +17,17 @@ locals {
 ##############
 resource "aws_s3_bucket" "this" {
   bucket        = "thalia-${var.prefix}"
-  acl           = "private"
   force_destroy = "true"
+  tags = var.tags
+}
+
+resource "aws_s3_bucket_acl" "this" {
+  bucket = aws_s3_bucket.this.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_cors_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
 
   cors_rule {
     allowed_headers = ["*"]
@@ -27,8 +36,6 @@ resource "aws_s3_bucket" "this" {
     expose_headers  = ["ETag", "Content-Type", "Accept"]
     max_age_seconds = 3000
   }
-
-  tags = var.tags
 }
 
 ############
@@ -47,7 +54,7 @@ EOT
 # Uploading objects #
 ############
 
-resource "aws_s3_bucket_object" "code_build_object" {
+resource "aws_s3_object" "code_build_object" {
   for_each = fileset("${data.external.code_build.working_dir}/${data.external.code_build.result.dest}", "**")
   key      = each.value
   source   = "${data.external.code_build.working_dir}/${data.external.code_build.result.dest}/${each.value}"
