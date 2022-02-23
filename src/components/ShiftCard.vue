@@ -16,7 +16,7 @@
       </p>
     </div>
     <div class="card-body">
-      <p class="font-weight-bold">Amount of orders: {{ shift.num_orders }}</p>
+      <p class="fw-bold">Amount of orders: {{ shift.num_orders }}</p>
       <ul>
         <li
           v-for="(amount, product) in shift.product_sales"

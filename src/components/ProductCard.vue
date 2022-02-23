@@ -12,7 +12,7 @@
           </div>
           <div class="col-3 p-0 m-0">
             <h5
-              class="font-oswald m-0 text-right"
+              class="font-oswald m-0 float-end"
               style="color: #e62272"
               v-if="amount > 0"
             >

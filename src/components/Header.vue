@@ -1,30 +1,30 @@
 <template>
   <nav class="navbar sticky-top site-header navbar-dark user-select-none">
-    <div class="container pl-0 pr-0">
+    <div class="container ps-0 pr-0">
       <div
         class="
           nav-link
           navbar-brand
           font-oswald
-          pl-0
-          pr-0
-          mr-1
+          ps-0
+          pe-0
+          me-1
           user-select-none
         "
       >
         <router-link
           v-if="authenticated"
           :to="{ name: 'Shifts' }"
-          class="font-weight-bold link-unstyled"
+          class="fw-bold link-unstyled"
           >Thadmin</router-link
         >
         <router-link
           v-else
           :to="{ name: 'Index' }"
-          class="font-weight-bold link-unstyled"
+          class="fw-bold link-unstyled"
           >Thadmin</router-link
         >
-        • <span class="font-weight-light">{{ currentTime }}</span>
+        • <span class="fw-light">{{ currentTime }}</span>
       </div>
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -46,9 +46,9 @@
               :src="memberImageURL"
               alt="Member profile image"
               style="max-height: 1rem"
-              class="memberProfileImage mr-2"
+              class="memberProfileImage me-2"
             />
-            <span class="font-oswald mr-2">{{ username }}</span
+            <span class="font-oswald me-2">{{ username }}</span
             ><i class="fas fa-sign-out-alt"></i>
           </a>
           <a

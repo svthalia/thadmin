@@ -16,8 +16,8 @@
             <h6
               class="
                 m-0
-                text-left
-                font-oswald font-weight-normal
+                float-start
+                font-oswald fw-normal
                 user-select-none
               "
             >
@@ -28,7 +28,7 @@
             </h6>
           </div>
           <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0">
-            <h6 class="text-right m-0 font-oswald font-weight-normal">
+            <h6 class="float-end m-0 font-oswald fw-normal">
               <span class="user-select-all"
                 >€{{
                   order.getAmount() !== null ? order.getAmount() : "?"
@@ -46,7 +46,7 @@
         <p class="m-0 order-id user-select-none">
           Order <span class="user-select-all">{{ order.getPK() }}</span
           ><i
-            class="far fa-trash-alt ml-2"
+            class="far fa-trash-alt ms-2"
             v-if="order.hasProducts() && !order.isPaid()"
             v-on:click="reset()"
           ></i>
@@ -130,16 +130,16 @@
         <div class="m-0" v-else-if="!order.isPaid() && order.needsPayment()">
           <button
             class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-            data-toggle="modal"
-            data-target="#cash-payment-modal"
+            data-bs-toggle="modal"
+            data-bs-target="#cash-payment-modal"
             :disabled="needsSync()"
           >
             <i class="fas fa-coins"></i> Cash payment
           </button>
           <button
             class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-            data-toggle="modal"
-            data-target="#card-payment-modal"
+            data-bs-toggle="modal"
+            data-bs-target="#card-payment-modal"
             :disabled="needsSync()"
           >
             <i class="fas fa-credit-card"></i> Card payment

@@ -14,7 +14,7 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
@@ -23,7 +23,7 @@
         <div class="modal-body text-center">
           <span class="mb-3">To be paid:</span>
           <br />
-          <span class="font-oswald font-weight-bold display-2"
+          <span class="font-oswald fw-bold display-2"
             >€{{ order.getAmount() }}</span
           >
           <br />
@@ -52,7 +52,7 @@
             type="button"
             class="btn btn-primary"
             :disabled="order.isAgeRestricted() && !order.ageCheckPerformed"
-            data-dismiss="modal"
+            data-bs-dismiss="modal"
             @click="registerPayment"
           >
             Register {{ paymentMethod }} payment
