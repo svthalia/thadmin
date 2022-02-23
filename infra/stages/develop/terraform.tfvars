@@ -1,7 +1,5 @@
 aws_region = "eu-west-1"
 
-aws_profile = "thalia"
-
 aws_tags = {
   "Category"    = "thadmin",
   "Owner"       = "technicie",

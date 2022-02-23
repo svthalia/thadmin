@@ -13,11 +13,6 @@ variable "domain_name" {
   type        = string
 }
 
-variable "aws_profile" {
-  description = "AWS credentials profile to use"
-  type        = string
-}
-
 variable "aws_region" {
   description = "AWS region where the application should be hosted"
   type        = string
