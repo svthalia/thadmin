@@ -100,13 +100,13 @@ class Order {
     return item;
   }
 
-  public plusProduct(product: Product): void {
+  public plusProduct(product: Product, amount = 1): void {
     this.synced = false;
     if (this.items === null) {
       const orderItem = {
         product: product.name,
-        amount: 1,
-        total: product.price,
+        amount: amount,
+        total: product.price * amount,
       };
       // eslint-disable-next-line @typescript-eslint/camelcase
       this.items = [orderItem];
@@ -115,12 +115,12 @@ class Order {
       if (orderItem === null) {
         orderItem = {
           product: product.name,
-          amount: 1,
-          total: product.price,
+          amount: amount,
+          total: product.price * amount,
         };
         this.items.push(orderItem);
       } else {
-        orderItem.amount++;
+        orderItem.amount += amount;
         orderItem.total = product.price * orderItem.amount;
       }
     }
