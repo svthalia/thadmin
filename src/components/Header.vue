@@ -2,15 +2,7 @@
   <nav class="navbar sticky-top site-header navbar-dark user-select-none">
     <div class="container ps-0 pr-0">
       <div
-        class="
-          nav-link
-          navbar-brand
-          font-oswald
-          ps-0
-          pe-0
-          me-1
-          user-select-none
-        "
+        class="nav-link navbar-brand font-oswald ps-0 pe-0 me-1 user-select-none"
       >
         <router-link
           v-if="authenticated"
@@ -31,13 +23,7 @@
           <a
             v-if="authenticated"
             href="#"
-            class="
-              nav-link
-              d-flex
-              justify-content-center
-              align-items-center
-              user-select-none
-            "
+            class="nav-link d-flex justify-content-center align-items-center user-select-none"
             style="cursor: pointer"
             @click="logout"
           >

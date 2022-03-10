@@ -6,6 +6,7 @@ import Order from "@/models/order.model";
 import _Order from "@/models/_order.model";
 import Member from "@/models/member.model";
 import Payable from "@/models/payable.model";
+import OrderItem from "@/models/orderitem.model";
 
 class SalesService {
   apiService = ApiService;
@@ -25,8 +26,10 @@ class SalesService {
   }
 
   async newOrder(shift: number, order: Order | null = null): Promise<Order> {
-    let data: {};
+    let data: { order_items: OrderItem[] };
     if (order === null) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       data = {};
     } else {
       data = order.getAPIData();
@@ -47,9 +50,10 @@ class SalesService {
       order = await this.newOrder(shift, order);
     }
     const result: AxiosResponse<_Order> = await this.apiService.put(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       `/admin/sales/orders/${order._o.pk}/`,
+      // eslint-disable-next-line @typescript-eslint/ban-types
       order.getAPIData() as {}
     );
     order.updateFromAPI(result.data);
@@ -58,7 +62,7 @@ class SalesService {
 
   async getOrderDetails(order: Order): Promise<Order> {
     const result: AxiosResponse<_Order> = await this.apiService.get(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       `/admin/sales/orders/${order._o.pk}/`
     );
@@ -72,11 +76,7 @@ class SalesService {
     if (order._o === null) {
       return;
     }
-    return await this.apiService.delete(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      `/admin/sales/orders/${order._o.pk}/`
-    );
+    return await this.apiService.delete(`/admin/sales/orders/${order._o.pk}/`);
   }
 
   async getAuthorizedUserData(): Promise<Member> {
@@ -92,7 +92,6 @@ class SalesService {
     }
     const result: AxiosResponse<Payable> = await this.apiService.patch(
       `/admin/payments/payables/sales/order/${order._o.pk}/`,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       { payment_type: paymentType + "_payment" }
     );
     return result.data;

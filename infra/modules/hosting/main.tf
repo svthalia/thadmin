@@ -18,7 +18,7 @@ locals {
 resource "aws_s3_bucket" "this" {
   bucket        = "thalia-${var.prefix}"
   force_destroy = "true"
-  tags = var.tags
+  tags          = var.tags
 }
 
 resource "aws_s3_bucket_acl" "this" {

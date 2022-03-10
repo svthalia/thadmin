@@ -28,35 +28,35 @@
         <div class="row">
           <div class="d-flex align-content-stretch align-items-stretch">
             <button
-                v-on:click.stop
-                class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white"
-                :class="{ disabled: amount <= 0 || paid }"
-                v-on="(amount > 0) & !paid ? { click: del } : {}"
+              v-on:click.stop
+              class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white"
+              :class="{ disabled: amount <= 0 || paid }"
+              v-on="(amount > 0) && !paid ? { click: del } : {}"
             >
               <i class="fas fa-trash"></i>
             </button>
             <button
-                v-on:click.stop
-                class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white"
-                :class="{ disabled: amount <= 0 || paid }"
-                v-on="(amount > 0) & !paid ? { click: decrement } : {}"
+              v-on:click.stop
+              class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white"
+              :class="{ disabled: amount <= 0 || paid }"
+              v-on="(amount > 0) && !paid ? { click: decrement } : {}"
             >
               <i class="fas fa-minus"></i>
             </button>
             <button
-                v-on:click.stop
-                class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
-                :class="{ disabled: paid }"
-                v-on="!paid ? { click: increment } : {}"
+              v-on:click.stop
+              class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
+              :class="{ disabled: paid }"
+              v-on="!paid ? { click: increment } : {}"
             >
               <i class="fas fa-plus"></i>
             </button>
             <button
-                v-on:click.stop
-                class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
-                :class="{ disabled: paid }"
-                style="border-left: 1px white dotted;"
-                v-on="!paid ? { click: increment5 } : {}"
+              v-on:click.stop
+              class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
+              :class="{ disabled: paid }"
+              style="border-left: 1px white dotted"
+              v-on="!paid ? { click: increment5 } : {}"
             >
               <span class="fw-bold">5</span>
             </button>
