@@ -1,15 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import store from "@/store";
-
-interface OAuthAuthorizeData {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
-  refresh_token: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/class-name-casing
 class _ApiService {
   authorizationEndpoint: string;
   baseUri: string;

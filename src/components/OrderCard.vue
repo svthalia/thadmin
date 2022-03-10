@@ -13,14 +13,7 @@
       <div class="card-header">
         <div class="row m-0 p-0">
           <div class="col-10 p-0 m-0">
-            <h6
-              class="
-                m-0
-                float-start
-                font-oswald fw-normal
-                user-select-none
-              "
-            >
+            <h6 class="m-0 float-start font-oswald fw-normal user-select-none">
               <span class="user-select-all" v-if="order.getDescription()">{{
                 order.getDescription()
               }}</span
@@ -183,14 +176,7 @@
       </div>
     </div>
     <div
-      class="
-        position-absolute
-        d-flex
-        align-items-center
-        justify-content-center
-        w-100
-        h-100
-      "
+      class="position-absolute d-flex align-items-center justify-content-center w-100 h-100"
       v-if="needsManualSync()"
     >
       <button

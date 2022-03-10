@@ -2,7 +2,6 @@ import OrderItem from "@/models/orderitem.model";
 import Payment from "@/models/payment.model";
 import Member from "@/models/member.model";
 
-// eslint-disable-next-line @typescript-eslint/class-name-casing
 interface _Order {
   pk: string;
   shift: string | null;

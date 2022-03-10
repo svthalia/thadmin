@@ -108,7 +108,6 @@ class Order {
         amount: amount,
         total: product.price * amount,
       };
-      // eslint-disable-next-line @typescript-eslint/camelcase
       this.items = [orderItem];
     } else {
       let orderItem = this.getOrderItem(product);
@@ -147,9 +146,6 @@ class Order {
       const orderItem = this.getOrderItem(product);
       if (orderItem !== null) {
         this.synced = false;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/camelcase
         this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
@@ -177,17 +173,14 @@ class Order {
     }
   }
 
-  public getAPIData(): {} {
+  public getAPIData(): { order_items: OrderItem[] } {
     let data = this.items;
     if (data !== null) {
       data.forEach((i) => delete i.total);
     }
     if (data === null) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       data = [];
     }
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return { order_items: data };
   }
 
