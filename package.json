@@ -9,7 +9,7 @@
     "fmt": "prettier ./*.{js,json} src/**/*.{ts,vue} --write"
   },
   "dependencies": {
-    "@babel/core": "7.17.5",
+    "@babel/core": "7.17.7",
     "@popperjs/core": "2.11.4",
     "@sentry/tracing": "6.18.2",
     "@sentry/vue": "6.18.2",
