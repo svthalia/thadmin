@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@babel/core": "7.17.8",
-    "@popperjs/core": "2.11.4",
+    "@popperjs/core": "2.11.5",
     "@sentry/tracing": "6.19.4",
     "@sentry/vue": "6.19.4",
     "axios": "0.26.1",
