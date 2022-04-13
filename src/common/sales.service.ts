@@ -96,6 +96,16 @@ class SalesService {
     );
     return result.data;
   }
+
+  async getShiftOrders(shift: Shift): Promise<[[_Order]]> {
+    const result: AxiosResponse<Paginated<[_Order]>> =
+      await this.apiService.get(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        `/admin/sales/shifts/${shift.pk}/orders/`
+      );
+    return result.data.results;
+  }
 }
 
 export default SalesService;

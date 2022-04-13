@@ -20,6 +20,15 @@
       locked, you can still process orders.
     </div>
     <div class="row flex-column-reverse flex-md-row px-2" v-if="shift">
+      <div class="">
+        <button
+            class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
+            data-bs-toggle="modal"
+            data-bs-target="#shift-order-overview"
+        >
+          <i class="fas fa-history me-2"></i>Check out confirmed orders
+        </button>
+      </div>
       <div class="products-wrapper col-md-7">
         <div class="product-cards row row-cols-3 row-cols-lg-4">
           <div
@@ -43,6 +52,10 @@
       <Loader size="60px" background-color="#000000"></Loader>
     </div>
   </div>
+  <ShiftOrderOverview
+      id="shift-order-overview"
+      v-bind:shift="this.shift"
+  ></ShiftOrderOverview>
 </template>
 
 <script>
@@ -51,12 +64,14 @@ import OrderCard from "@/components/OrderCard";
 import SalesService from "@/common/sales.service";
 import Order from "@/models/order.model";
 import Loader from "@/components/Loader";
+import ShiftOrderOverview from "@/components/ShiftOrderOverview";
 
 let salesService = new SalesService();
 
 export default {
   name: "ShiftConsole",
   components: {
+    ShiftOrderOverview,
     OrderCard,
     ProductCard,
     Loader,

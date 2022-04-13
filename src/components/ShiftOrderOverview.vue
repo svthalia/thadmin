@@ -10,7 +10,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Register {{ paymentMethod }} payment</h5>
+          <h5 class="modal-title">Orders for shift</h5>
           <button
             type="button"
             class="close"
@@ -21,41 +21,25 @@
           </button>
         </div>
         <div class="modal-body text-center">
-          <span class="mb-3">To be paid:</span>
-          <br />
-          <span class="font-oswald fw-bold display-2"
-            >€{{ order.getAmount() }}</span
-          >
-          <br />
-          <span class="mb-3">{{ order.getDescription() }}</span>
-          <div class="mt-4" v-if="order.isAgeRestricted()">
-            <span class="mb-1"
-              >This order contains age restricted products.</span
-            >
-            <button
-              type="button"
-              class="btn btn-outline-success"
-              v-bind:class="{
-                'btn-success text-white': order.ageCheckPerformed,
-              }"
-              data-bs-toggle="button"
-              autocomplete="off"
-              aria-pressed="true"
-              @click="toggleAgeCheck"
-            >
-              I verified that this person is 18+
-            </button>
-          </div>
+          <ul id="orders">
+            <li v-for="order in orders" :key="order.pk">
+              <ul>
+                <li>pk: {{ order.pk }}</li>
+                <li>created: {{ order.created_at }}</li>
+                <li>total amount: € {{ order.total_amount }}</li>
+                <li>#items: {{ order.num_items }}</li>
+              </ul>
+
+            </li>
+          </ul>
         </div>
         <div class="modal-footer">
           <button
             type="button"
             class="btn btn-primary"
-            :disabled="order.isAgeRestricted() && !order.ageCheckPerformed"
-            data-bs-dismiss="modal"
-            @click="registerPayment"
+            @click="refreshOrderOverview"
           >
-            Register {{ paymentMethod }} payment
+            Refresh
           </button>
         </div>
       </div>
@@ -64,29 +48,28 @@
 </template>
 
 <script>
-import Order from "@/common/sales.service";
 import SalesService from "@/common/sales.service";
+import Shift from "@/models/shift.model";
 
 let salesService = new SalesService();
 
 export default {
-  name: "OrderCard",
+  name: "ShiftOrderOverview",
   props: {
-    order: Order,
-    paymentMethod: String,
+    shift: Shift,
     id: String,
   },
   methods: {
-    toggleAgeCheck: function () {
-      this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
+    refreshOrderOverview: function () {
+      salesService.getShiftOrders(this.shift).then((o) => {
+        this.orders = o
+      });
     },
-    registerPayment: async function () {
-      let result = await salesService.createPayment(
-        this.order,
-        this.paymentMethod
-      );
-      if (result.payment) this.$parent.done();
-    },
+  },
+  data() {
+    return {
+      orders: null,
+    };
   },
 };
 </script>
