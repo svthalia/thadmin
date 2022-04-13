@@ -7,12 +7,14 @@ class Order {
   synced: boolean;
   _o: _Order | null;
   ageCheckPerformed: boolean;
+  discount: null | number;
 
   constructor() {
     this.items = null;
     this.synced = false;
     this._o = null;
     this.ageCheckPerformed = false;
+    this.discount = null;
   }
 
   public getPK(): string | null {
@@ -85,6 +87,46 @@ class Order {
 
   public hasProducts(): boolean {
     return this.items !== null && this.items.length > 0;
+  }
+
+  public getSubtotal(): null | number {
+    if (this._o?.subtotal) {
+      return this._o.subtotal;
+    }
+    return null;
+  }
+
+  public getDiscount(): null | number {
+    if (this._o?.discount) {
+      return this._o.discount;
+    }
+    return null;
+  }
+
+  public addDiscount(amount: number) {
+    if (this.getSubtotal() === null) {
+      return;
+    }
+    this.synced = false;
+    if (this.discount === null) {
+      this.discount = amount;
+    } else {
+      this.discount += amount;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (this.getSubtotal() < this.discount) {
+      this.discount = this.getSubtotal();
+    }
+  }
+
+  public removeDiscount(amount: number) {
+    this.synced = false;
+    if (this.discount === null || this.discount < amount) {
+      this.discount = 0;
+    } else {
+      this.discount -= amount;
+    }
   }
 
   public getOrderItem(product: Product): OrderItem | null {
@@ -167,19 +209,25 @@ class Order {
     this.synced = true;
     this._o = o;
     this.items = o.order_items;
+    this.discount = o.discount;
 
     if (this.hasPayer() && this.payerIsAdult()) {
       this.ageCheckPerformed = true;
     }
   }
 
-  public getAPIData(): { order_items: OrderItem[] } {
+  public getAPIData():
+    | { order_items: OrderItem[]; discount: null | number }
+    | { order_items: OrderItem[] } {
     let data = this.items;
     if (data !== null) {
       data.forEach((i) => delete i.total);
     }
     if (data === null) {
       data = [];
+    }
+    if (this.discount !== null) {
+      return { order_items: data, discount: this.discount };
     }
     return { order_items: data };
   }
