@@ -1,6 +1,7 @@
 import Product from "@/models/product.model";
 import OrderItem from "@/models/orderitem.model";
 import _Order from "@/models/_order.model";
+import { min } from "@popperjs/core/lib/utils/math";
 
 class Order {
   items: OrderItem[] | null;
@@ -96,22 +97,16 @@ class Order {
     return null;
   }
 
-  public getDiscount(): null | number {
-    if (this._o?.discount) {
-      return this._o.discount;
-    }
-    return null;
-  }
-
   public addDiscount(amount: number) {
     if (this.getSubtotal() === null) {
       return;
     }
     this.synced = false;
     if (this.discount === null) {
-      this.discount = amount;
+      this.discount = parseFloat(String(amount));
     } else {
-      this.discount += amount;
+      this.discount =
+        parseFloat(String(this.discount)) + parseFloat(String(amount));
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -125,7 +120,7 @@ class Order {
     if (this.discount === null || this.discount < amount) {
       this.discount = 0;
     } else {
-      this.discount -= amount;
+      this.discount -= parseFloat(String(amount));
     }
   }
 
@@ -165,6 +160,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
   }
 
   public minusProduct(product: Product): void {
@@ -181,6 +177,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
   }
 
   public deleteProduct(product: Product): void {
@@ -191,6 +188,7 @@ class Order {
         this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
   }
 
   public productAmount(product: Product): number {
@@ -214,6 +212,7 @@ class Order {
     if (this.hasPayer() && this.payerIsAdult()) {
       this.ageCheckPerformed = true;
     }
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
   }
 
   public getAPIData():
