@@ -31,8 +31,7 @@
           </div>
         </div>
       </div>
-      <div class="card-header">
-<!--        <div class="card-header" v-if="order.getDiscount()">-->
+      <div class="card-header" v-if="order.discount">
         Subtotal: €{{order.getSubtotal()}} - Discount: €{{order.discount}}
       </div>
       <div

@@ -124,6 +124,13 @@ class Order {
     }
   }
 
+  public updateDiscount() {
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    if (this.discount == 0) {
+      this.discount = null;
+    }
+  }
+
   public getOrderItem(product: Product): OrderItem | null {
     if (this.items === null) {
       return null;
@@ -160,7 +167,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
-    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    this.updateDiscount();
   }
 
   public minusProduct(product: Product): void {
@@ -177,7 +184,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
-    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    this.updateDiscount();
   }
 
   public deleteProduct(product: Product): void {
@@ -188,7 +195,7 @@ class Order {
         this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
-    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    this.updateDiscount();
   }
 
   public productAmount(product: Product): number {
@@ -212,7 +219,7 @@ class Order {
     if (this.hasPayer() && this.payerIsAdult()) {
       this.ageCheckPerformed = true;
     }
-    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    this.updateDiscount();
   }
 
   public getAPIData():
