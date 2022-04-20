@@ -1,18 +1,21 @@
 import Product from "@/models/product.model";
 import OrderItem from "@/models/orderitem.model";
 import _Order from "@/models/_order.model";
+import { min } from "@popperjs/core/lib/utils/math";
 
 class Order {
   items: OrderItem[] | null;
   synced: boolean;
   _o: _Order | null;
   ageCheckPerformed: boolean;
+  discount: null | number;
 
   constructor() {
     this.items = null;
     this.synced = false;
     this._o = null;
     this.ageCheckPerformed = false;
+    this.discount = null;
   }
 
   public getPK(): string | null {
@@ -87,6 +90,47 @@ class Order {
     return this.items !== null && this.items.length > 0;
   }
 
+  public getSubtotal(): null | number {
+    if (this._o?.subtotal) {
+      return this._o.subtotal;
+    }
+    return null;
+  }
+
+  public addDiscount(amount: number) {
+    if (this.getSubtotal() === null) {
+      return;
+    }
+    this.synced = false;
+    if (this.discount === null) {
+      this.discount = parseFloat(String(amount));
+    } else {
+      this.discount =
+        parseFloat(String(this.discount)) + parseFloat(String(amount));
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (this.getSubtotal() < this.discount) {
+      this.discount = this.getSubtotal();
+    }
+  }
+
+  public removeDiscount(amount: number) {
+    this.synced = false;
+    if (this.discount === null || this.discount < amount) {
+      this.discount = 0;
+    } else {
+      this.discount -= parseFloat(String(amount));
+    }
+  }
+
+  public updateDiscount() {
+    this.discount = min(this.getSubtotal() || 0, this.discount || 0);
+    if (this.discount == 0) {
+      this.discount = null;
+    }
+  }
+
   public getOrderItem(product: Product): OrderItem | null {
     if (this.items === null) {
       return null;
@@ -123,6 +167,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
+    this.updateDiscount();
   }
 
   public minusProduct(product: Product): void {
@@ -139,6 +184,7 @@ class Order {
         orderItem.total = product.price * orderItem.amount;
       }
     }
+    this.updateDiscount();
   }
 
   public deleteProduct(product: Product): void {
@@ -149,6 +195,7 @@ class Order {
         this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
+    this.updateDiscount();
   }
 
   public productAmount(product: Product): number {
@@ -167,19 +214,26 @@ class Order {
     this.synced = true;
     this._o = o;
     this.items = o.order_items;
+    this.discount = o.discount;
 
     if (this.hasPayer() && this.payerIsAdult()) {
       this.ageCheckPerformed = true;
     }
+    this.updateDiscount();
   }
 
-  public getAPIData(): { order_items: OrderItem[] } {
+  public getAPIData():
+    | { order_items: OrderItem[]; discount: null | number }
+    | { order_items: OrderItem[] } {
     let data = this.items;
     if (data !== null) {
       data.forEach((i) => delete i.total);
     }
     if (data === null) {
       data = [];
+    }
+    if (this.discount !== null) {
+      return { order_items: data, discount: this.discount };
     }
     return { order_items: data };
   }
