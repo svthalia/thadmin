@@ -42,7 +42,7 @@ jobs:
       run: yarn install --frozen-lockfile
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 0.14.10
 
@@ -145,7 +145,7 @@ jobs:
         node-version: '14.x'
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 0.14.10
 
@@ -202,7 +202,7 @@ jobs:
         node-version: '14.x'
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 0.14.10
 
@@ -249,7 +249,7 @@ jobs:
         node-version: '14.x'
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 0.14.10
 
