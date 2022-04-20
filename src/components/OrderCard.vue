@@ -181,7 +181,7 @@
           v-on:click.stop
           v-on="!order.paid ? { click: addDiscount } : {}"
           class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-          v-if="order.discount < order.getSubtotal()"
+          :disabled="order.discount >= order.getSubtotal()"
       >
         <i class="fas fa-credit-card"></i> Add €0.50 discount
       </button>
@@ -189,7 +189,7 @@
           v-on:click.stop
           v-on="!order.paid ? { click: removeDiscount } : {}"
           class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-          v-if="order.discount && order.discount > 0"
+          :disabled="order.discount === null || order.discount === 0"
       >
         <i class="fas fa-credit-card"></i> Remove €0.50 discount
       </button><br/>
