@@ -31,6 +31,7 @@
           </div>
         </div>
       </div>
+
       <div
         class="card-body pt-2 pb-1 px-2"
         v-bind:class="{ blurred: !order.getPK() }"
@@ -174,27 +175,6 @@
         </div>
       </div>
     </div>
-    <div class="card-footer p-1 p-md-2"
-         v-if="order.hasProducts() && !order.isPaid()"
-    >
-      <button
-          v-on:click.stop
-          v-on="!order.paid ? { click: addDiscount } : {}"
-          class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-          :disabled="order.discount >= order.getSubtotal()"
-      >
-        <i class="fas fa-credit-card"></i> Add €0.50 discount
-      </button>
-      <button
-          v-on:click.stop
-          v-on="!order.paid ? { click: removeDiscount } : {}"
-          class="btn btn-primary p-1 p-md-2 px-2 px-md-3 m-1 font-oswald"
-          :disabled="order.discount === null || order.discount === 0"
-      >
-        <i class="fas fa-credit-card"></i> Remove €0.50 discount
-      </button><br/>
-      <span v-if="order.discount"><span class="me-3">Subtotal: €{{order.getSubtotal()}}</span><span class="mx-3">Discount: €{{order.discount.toFixed(2)}}</span><span class="ms-3">Total: €{{order.getAmount()}}</span></span>
-    </div>
     <div
       class="position-absolute d-flex align-items-center justify-content-center w-100 h-100"
       v-if="needsManualSync()"
@@ -259,12 +239,6 @@ export default {
     },
     toggleAgeCheck: function () {
       this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
-    },
-    addDiscount: function() {
-      this.order.addDiscount(0.5)
-    },
-    removeDiscount: function() {
-      this.order.removeDiscount(0.5)
     },
   },
 };
