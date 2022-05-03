@@ -81,6 +81,7 @@
               v-bind:size="1024"
               renderAs="svg"
               level="M"
+              style="background-color: white; padding: 5px"
             />
           </a>
         </div>
