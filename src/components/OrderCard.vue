@@ -24,7 +24,7 @@
             <h6 class="float-end m-0 font-oswald fw-normal">
               <span class="user-select-all"
                 >€{{
-                  order.getAmount() !== null ? order.getAmount() : "?"
+                  order.getAmount()?.toFixed(2) ?? "?"
                 }}</span
               >
             </h6>

@@ -26,18 +26,13 @@ class SalesService {
   }
 
   async newOrder(shift: number, order: Order | null = null): Promise<Order> {
-    let data: { order_items: OrderItem[] };
-    if (order === null) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      data = {};
-    } else {
-      data = order.getAPIData();
-    }
+    const data: { order_items: OrderItem[] } = order?.getAPIData() ?? {
+      order_items: [],
+    };
     const result: AxiosResponse<_Order> = await this.apiService.post(
       `/admin/sales/shifts/${shift}/orders/`,
       data
-    ); // TODO this endpoint does not accept all fields, so items are set to 0
+    );
     if (order !== null) {
       order.updateFromAPI(result.data);
       return order;
@@ -48,6 +43,7 @@ class SalesService {
   async updateOrder(order: Order, shift: number | null = null): Promise<Order> {
     if (order._o === null && shift !== null) {
       order = await this.newOrder(shift, order);
+      return order;
     }
     const result: AxiosResponse<_Order> = await this.apiService.put(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

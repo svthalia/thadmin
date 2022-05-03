@@ -69,15 +69,18 @@ export default {
       this.order = new Order();
     },
     updateCurrentOrder: async function () {
+      if (this.orderBeingUpdated === true) return;
       if (this.order === null) {
         this.nextOrder();
       }
       if (this.order.hasProducts()) {
         clearTimeout(this.fetchOrder);
+        this.orderBeingUpdated = true;
         this.order = await salesService.updateOrder(
           this.order,
           parseInt(this.shiftId)
         );
+        this.orderBeingUpdated = false;
       }
       this.updateOrderToServer = null;
     },

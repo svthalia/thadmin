@@ -23,15 +23,24 @@ class Order {
   }
 
   public getDescription(): string | null {
-    if (this._o?.order_description) {
+    if (this.synced && this._o?.order_description) {
       return this._o.order_description;
+    }
+    if (this.items) {
+      return this.items.map((i) => i.amount + "x" + " " + i.product).join(",");
     }
     return null;
   }
 
   public getAmount(): null | number {
-    if (this._o?.total_amount) {
-      return this._o.total_amount;
+    if (this.synced && this._o?.total_amount) {
+      return Number(this._o.total_amount);
+    }
+    if (this.items) {
+      return this.items.reduce(
+        (partialSum, i) => partialSum + (i.total ?? 0),
+        0
+      );
     }
     return null;
   }
@@ -84,7 +93,8 @@ class Order {
   }
 
   public hasProducts(): boolean {
-    return this.items !== null && this.items.length > 0;
+    if (this.items == null) return false;
+    return this.items.length > 0;
   }
 
   public getOrderItem(product: Product): OrderItem | null {
