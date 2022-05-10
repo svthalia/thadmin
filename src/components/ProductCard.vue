@@ -31,7 +31,7 @@
               v-on:click.stop
               class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white"
               :class="{ disabled: amount <= 0 || paid }"
-              v-on="(amount > 0) && !paid ? { click: del } : {}"
+              v-on="amount > 0 && !paid ? { click: del } : {}"
             >
               <i class="fas fa-trash"></i>
             </button>
@@ -39,7 +39,7 @@
               v-on:click.stop
               class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white"
               :class="{ disabled: amount <= 0 || paid }"
-              v-on="(amount > 0) && !paid ? { click: decrement } : {}"
+              v-on="amount > 0 && !paid ? { click: decrement } : {}"
             >
               <i class="fas fa-minus"></i>
             </button>

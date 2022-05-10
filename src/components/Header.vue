@@ -56,6 +56,7 @@ import SalesService from "@/common/sales.service";
 import { mapGetters } from "vuex";
 import store from "@/store";
 import ApiService from "@/common/api.service";
+import CryptoService from "@/common/crypto.service";
 
 export default {
   name: "Authorization",
@@ -81,8 +82,17 @@ export default {
     },
     async startLogin() {
       await store.dispatch("User/newRandomState");
+      await store.dispatch("User/newRandomChallenge");
       await store.dispatch("User/store");
-      window.location.href = ApiService.getAuthorizeRedirectURL();
+      CryptoService.getSHA256(store.state.User.challenge).then(
+        (codeChallenge) => {
+          window.location.href = ApiService.getAuthorizeRedirectURL(
+            store.state.User.stateKey,
+            codeChallenge,
+            true
+          );
+        }
+      );
     },
     setUserProfileImage() {
       let apiService = new SalesService();
