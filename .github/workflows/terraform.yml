@@ -115,6 +115,7 @@ jobs:
     env:
       VUE_APP_API_BASE_URI: https://staging.thalia.nu
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_ACCESS_TOKEN_ENDPOINT: /user/oauth/token/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-develop.technicie.nl/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -184,6 +185,7 @@ jobs:
     env:
       VUE_APP_API_BASE_URI: https://staging.thalia.nu
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_ACCESS_TOKEN_ENDPOINT: /user/oauth/token/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin-staging.technicie.nl/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
@@ -231,6 +233,7 @@ jobs:
     env:
       VUE_APP_API_BASE_URI: https://thalia.nu
       VUE_APP_API_AUTHORIZATION_ENDPOINT: /user/oauth/authorize/
+      VUE_APP_API_ACCESS_TOKEN_ENDPOINT: /user/oauth/token/
       VUE_APP_API_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       VUE_APP_API_OAUTH_REDIRECT_URI: https://thadmin.thalia.nu/auth/callback
       VUE_APP_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
