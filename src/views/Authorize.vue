@@ -15,6 +15,7 @@
 import store from "@/store";
 import router from "@/router";
 import Loader from "@/components/Loader";
+import ApiService from "@/common/api.service";
 
 export default {
   name: 'AuthorizationScreen',
@@ -29,17 +30,14 @@ export default {
           alert(`Authorization failed: ${url.searchParams.get("error")}`);
         }
         else {
-          let hash_params = url.hash.replace("#", "").split("&");
-          let hash_params_dict = {};
-          hash_params.forEach((item) => {
-            hash_params_dict[item.split(/=(.+)/)[0]] = item.split(/=(.+)/)[1]
-          });
+          let credentials = await ApiService.getAccessTokenFromAuthorizationCode(url.searchParams.get("code"));
           await store.dispatch("User/login", {
-            stateKey: hash_params_dict["state"] === undefined ? null : hash_params_dict["state"],
-            accessToken: hash_params_dict["access_token"],
-            expires: Date.now() + (parseInt(hash_params_dict["expires_in"]) * 1000),
-            tokenType: hash_params_dict["tokenType"],
-            scope: decodeURIComponent(hash_params_dict["scope"]).split(":")
+            stateKey: url.searchParams.get("state"),
+            accessToken: credentials.data.access_token,
+            refreshToken: credentials.data.refresh_token,
+            expires: Date.now() + (credentials.data.expires_in * 1000),
+            tokenType: credentials.data.token_type,
+            scope: credentials.data.scope,
           }).then(loggedIn => {
             if (!loggedIn) {
               alert("State token did not match, please try again...");
@@ -49,7 +47,7 @@ export default {
           });
         }
       } catch (e) {
-        alert("Authorization failed due to parsing error, please try again...");
+        alert("Authorization failed, please try again...");
       }
       await router.push({ name: "Shifts" });
     }

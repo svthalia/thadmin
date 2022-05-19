@@ -23,9 +23,7 @@
           <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0">
             <h6 class="float-end m-0 font-oswald fw-normal">
               <span class="user-select-all"
-                >€{{
-                  order.getAmount()?.toFixed(2) ?? "?"
-                }}</span
+                >€{{ order.getAmount()?.toFixed(2) ?? "?" }}</span
               >
             </h6>
           </div>
