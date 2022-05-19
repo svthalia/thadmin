@@ -39,7 +39,7 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Setup Yarn
-      run: yarn install --frozen-lockfile
+      run: yarn install
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -162,7 +162,7 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Setup Yarn
-      run: yarn install --frozen-lockfile
+      run: yarn install
 
     - name: Terraform Apply
       working-directory: infra/stages/develop
@@ -220,7 +220,7 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Setup Yarn
-      run: yarn install --frozen-lockfile
+      run: yarn install
 
     - name: Terraform Apply
       working-directory: infra/stages/staging
@@ -268,7 +268,7 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Setup Yarn
-      run: yarn install --frozen-lockfile
+      run: yarn install
 
     - name: Terraform Apply
       working-directory: infra/stages/production
