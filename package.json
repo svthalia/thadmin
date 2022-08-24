@@ -15,7 +15,7 @@
     "@sentry/vue": "7.11.1",
     "axios": "0.27.2",
     "bootstrap": "5.2.0",
-    "core-js": "3.24.1",
+    "core-js": "3.25.0",
     "npm-check-updates": "16.0.5",
     "qrcode.vue": "3.3.3",
     "vue": "3.2.37",
