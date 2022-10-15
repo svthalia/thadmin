@@ -16,7 +16,7 @@ data "aws_s3_bucket" "this" {
 
 module "cloudfront" {
   source  = "terraform-aws-modules/cloudfront/aws"
-  version = "2.9.3"
+  version = "3.0.0"
 
   aliases = [var.domain_name]
 
@@ -46,6 +46,8 @@ module "cloudfront" {
     path_pattern           = "*"
     target_origin_id       = "s3_bucket"
     viewer_protocol_policy = "redirect-to-https"
+    # This is id for SecurityHeadersPolicy copied from https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html
+    response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
 
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
