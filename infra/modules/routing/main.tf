@@ -16,7 +16,7 @@ data "aws_s3_bucket" "this" {
 
 module "cloudfront" {
   source  = "terraform-aws-modules/cloudfront/aws"
-  version = "3.0.0"
+  version = "3.0.1"
 
   aliases = [var.domain_name]
 
