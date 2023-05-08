@@ -11,8 +11,8 @@
   "dependencies": {
     "@babel/core": "7.21.8",
     "@popperjs/core": "2.11.7",
-    "@sentry/tracing": "7.51.0",
-    "@sentry/vue": "7.51.0",
+    "@sentry/tracing": "7.51.2",
+    "@sentry/vue": "7.51.2",
     "axios": "0.27.2",
     "bootstrap": "5.2.3",
     "core-js": "3.30.2",
