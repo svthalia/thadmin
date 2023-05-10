@@ -29,11 +29,9 @@ look something like the following (for local development):
 ```
 VUE_APP_API_BASE_URI=http://localhost:8000
 VUE_APP_API_AUTHORIZATION_ENDPOINT=/user/oauth/authorize/
-VUE_APP_API_OAUTH_CLIENT_ID=[client_id]
+VUE_APP_API_ACCESS_TOKEN_ENDPOINT=/user/oauth/token/
+VUE_APP_API_OAUTH_CLIENT_ID=r8d1Zg5c9WKtOPRHTi3wtKUga6xcQyP5YlE0ITXJ
 VUE_APP_API_OAUTH_REDIRECT_URI=http://localhost:8080/auth/callback
-VUE_APP_SENTRY_DSN=https://xxx.ingest.sentry.io/xxx
-VUE_APP_SENTRY_RELEASE=
-VUE_APP_SENTRY_ENVIRONMENT=local
 ```
 
 It is also possible to define these variables in your terminal's environment directly.
