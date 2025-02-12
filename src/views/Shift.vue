@@ -86,7 +86,7 @@ export default {
     },
     fetchOrderUpdates: async function () {
       if (this.order.isPaid()) return;
-      if (!(this.orderBeingUpdated || this.updateOrderToServer != null)) {
+      if (!(this.orderBeingUpdated || this.updateOrderToServer != null || this.order.getPK()=== null)) {
         // Do not GET if we're waiting for the response of a PUT
         const order = await salesService.getOrderDetails(this.order);
         if (this.order.getPK() === order._o.pk) {

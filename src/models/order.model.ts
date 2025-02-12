@@ -32,14 +32,14 @@ class Order {
     return null;
   }
 
-  public getAmount(): null | number {
+  public getAmount(): null | number {  
     if (this.synced && this._o?.total_amount) {
       return Number(this._o.total_amount);
     }
     if (this.items) {
       return this.items.reduce(
-        (partialSum, i) => partialSum + (i.total ?? 0),
-        0
+        (partialSum, i) => partialSum + (i.total ?? 0.0),
+        0.0
       );
     }
     return null;
@@ -183,12 +183,11 @@ class Order {
     }
   }
 
-  public getAPIData(): { order_items: OrderItem[] } {
-    let data = this.items;
-    if (data !== null) {
-      data.forEach((i) => delete i.total);
-    }
-    if (data === null) {
+  public getAPIData(): { order_items: {amount: number, product: string}[] } {
+    let data: {amount: number, product: string}[];
+    if (this.items !== null) {
+      data = this.items?.map((i: OrderItem) => ({amount: i.amount, product: i.product}))
+    } else {
       data = [];
     }
     return { order_items: data };
