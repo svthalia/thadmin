@@ -3,7 +3,6 @@ import { AxiosResponse } from "axios";
 import Paginated from "@/models/paginated.model";
 import Shift from "@/models/shift.model";
 import Order from "@/models/order.model";
-import _Order from "@/models/_order.model";
 import Member from "@/models/member.model";
 import Payable from "@/models/payable.model";
 import OrderItem from "@/models/orderitem.model";
@@ -34,12 +33,15 @@ class SalesService {
       data
     );
     const parsedData = {
-      ...result.data,  
-      subtotal: parseFloat(result.data.subtotal), 
-      total_amount: parseFloat(result.data.total_amount), 
-      discount: parseFloat(result.data.discount), 
-      order_items: result.data.order_items.map((i: { total: string; }) => ({...i, total: parseFloat(i.total)}))
-    }
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
     if (order !== null) {
       order.updateFromAPI(parsedData);
       return order;
@@ -60,12 +62,15 @@ class SalesService {
       order.getAPIData() as {}
     );
     const parsedData = {
-      ...result.data,  
-      subtotal: parseFloat(result.data.subtotal), 
-      total_amount: parseFloat(result.data.total_amount), 
-      discount: parseFloat(result.data.discount), 
-      order_items: result.data.order_items.map((i: { total: string; }) => ({...i, total: parseFloat(i.total)}))
-    }
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
     order.updateFromAPI(parsedData);
     return order;
   }
@@ -77,12 +82,15 @@ class SalesService {
       `/admin/sales/orders/${order._o.pk}/`
     );
     const parsedData = {
-      ...result.data,  
-      subtotal: parseFloat(result.data.subtotal), 
-      total_amount: parseFloat(result.data.total_amount), 
-      discount: parseFloat(result.data.discount), 
-      order_items: result.data.order_items.map((i: { total: string; }) => ({...i, total: parseFloat(i.total)}))
-    }
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
     if (order.synced) {
       order.updateFromAPI(parsedData);
     }
