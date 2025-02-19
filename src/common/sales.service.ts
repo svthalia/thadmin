@@ -3,7 +3,6 @@ import { AxiosResponse } from "axios";
 import Paginated from "@/models/paginated.model";
 import Shift from "@/models/shift.model";
 import Order from "@/models/order.model";
-import _Order from "@/models/_order.model";
 import Member from "@/models/member.model";
 import Payable from "@/models/payable.model";
 import OrderItem from "@/models/orderitem.model";
@@ -29,15 +28,25 @@ class SalesService {
     const data: { order_items: OrderItem[] } = order?.getAPIData() ?? {
       order_items: [],
     };
-    const result: AxiosResponse<_Order> = await this.apiService.post(
+    const result: AxiosResponse = await this.apiService.post(
       `/admin/sales/shifts/${shift}/orders/`,
       data
     );
+    const parsedData = {
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
     if (order !== null) {
-      order.updateFromAPI(result.data);
+      order.updateFromAPI(parsedData);
       return order;
     }
-    return Order.orderFromAPI(result.data);
+    return Order.orderFromAPI(parsedData);
   }
 
   async updateOrder(order: Order, shift: number | null = null): Promise<Order> {
@@ -45,25 +54,45 @@ class SalesService {
       order = await this.newOrder(shift, order);
       return order;
     }
-    const result: AxiosResponse<_Order> = await this.apiService.put(
+    const result: AxiosResponse = await this.apiService.put(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       `/admin/sales/orders/${order._o.pk}/`,
       // eslint-disable-next-line @typescript-eslint/ban-types
       order.getAPIData() as {}
     );
-    order.updateFromAPI(result.data);
+    const parsedData = {
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
+    order.updateFromAPI(parsedData);
     return order;
   }
 
   async getOrderDetails(order: Order): Promise<Order> {
-    const result: AxiosResponse<_Order> = await this.apiService.get(
+    const result: AxiosResponse = await this.apiService.get(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       `/admin/sales/orders/${order._o.pk}/`
     );
+    const parsedData = {
+      ...result.data,
+      subtotal: parseFloat(result.data.subtotal),
+      total_amount: parseFloat(result.data.total_amount),
+      discount: parseFloat(result.data.discount),
+      order_items: result.data.order_items.map((i: { total: string }) => ({
+        ...i,
+        total: parseFloat(i.total),
+      })),
+    };
     if (order.synced) {
-      order.updateFromAPI(result.data);
+      order.updateFromAPI(parsedData);
     }
     return order;
   }

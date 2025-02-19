@@ -64,13 +64,13 @@
 </template>
 
 <script>
-import Order from "@/common/sales.service";
+import Order from "@/models/order.model";
 import SalesService from "@/common/sales.service";
 
 let salesService = new SalesService();
 
 export default {
-  name: "OrderCard",
+  name: "ManualPaymentModal",
   props: {
     order: Order,
     paymentMethod: String,

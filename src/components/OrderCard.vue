@@ -200,7 +200,7 @@
 </template>
 
 <script>
-import Order from "@/common/sales.service";
+import Order from "@/models/order.model";
 import QrcodeVue from "qrcode.vue";
 import ManualPaymentModal from "@/components/ManualPaymentModal";
 
