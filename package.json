@@ -16,7 +16,7 @@
     "axios": "0.27.2",
     "bootstrap": "5.3.8",
     "core-js": "3.47.0",
-    "npm-check-updates": "16.3.25",
+    "npm-check-updates": "16.14.20",
     "qrcode.vue": "3.6.0",
     "vue": "3.5.25",
     "vue-class-component": "8.0.0-rc.1",
