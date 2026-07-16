@@ -43,6 +43,47 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap");
+.border-left-white-dotted {
+  border-left: 1px white dotted !important;
+}
+
+.progress{
+    --bs-progress-bar-bg: #93003c !important;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .progress {
+    --bs-progress-bg: #797872 !important;
+  }
+
+  .card {
+    --bs-card-bg: #444444 !important;
+    --bs-card-cap-color: #ffffff !important;
+    --bs-card-color: #ffffff !important;
+  }
+
+  .bg-card {
+    background-color: #444444;
+  }
+
+  .background-image {
+    filter: blur(10px) brightness(50%) !important;
+    opacity: 1 !important;
+  }
+
+  .border-left-white-dotted {
+    border-left: 1px #444444 dotted !important;
+  }
+
+  #app {
+      color: #ffffff !important;
+  }
+}
+
+.bg-card {
+  background-color: #ffffff;
+}
 
 * {
   -ms-touch-action: manipulation;
