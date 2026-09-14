@@ -24,7 +24,7 @@
           €{{ product.price }} <span v-if="product.age_restricted">• 18+</span>
         </p>
       </div>
-      <div class="card-footer bg-white p-0 border-0">
+      <div class="card-footer bg-card p-0 border-0">
         <div class="row">
           <div class="d-flex align-content-stretch align-items-stretch">
             <button
@@ -53,9 +53,8 @@
             </button>
             <button
               v-on:click.stop
-              class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
+              class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white border-left-white-dotted"
               :class="{ disabled: paid }"
-              style="border-left: 1px white dotted"
               v-on="!paid ? { click: increment5 } : {}"
             >
               <span class="fw-bold">5</span>
@@ -144,7 +143,7 @@ button {
 
 .card-body {
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 .disabled {
   visibility: hidden;
