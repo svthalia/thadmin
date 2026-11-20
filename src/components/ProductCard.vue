@@ -2,8 +2,8 @@
   <div class="square-wrapper">
     <div
       class="card square border-0 p-0 shadow user-select-none"
-      :class="{ 'hide-pointer': paid }"
-      v-on="!paid ? { click: increment } : {}"
+      :class="{ 'hide-pointer': locked }"
+      v-on="!locked ? { click: increment } : {}"
     >
       <div class="card-body p-2">
         <div class="row m-0 p-0">
@@ -30,33 +30,33 @@
             <button
               v-on:click.stop
               class="btn btn-danger flex-grow-1 px-0 py-2 m-0 text-white"
-              :class="{ disabled: amount <= 0 || paid }"
-              v-on="amount > 0 && !paid ? { click: del } : {}"
+              :class="{ disabled: amount <= 0 || paid || locked }"
+              v-on="amount > 0 && !paid && !locked ? { click: del } : {}"
             >
               <i class="fas fa-trash"></i>
             </button>
             <button
               v-on:click.stop
               class="btn btn-warning flex-grow-1 px-0 py-2 m-0 text-white"
-              :class="{ disabled: amount <= 0 || paid }"
-              v-on="amount > 0 && !paid ? { click: decrement } : {}"
+              :class="{ disabled: amount <= 0 || paid || locked }"
+              v-on="amount > 0 && !paid && !locked ? { click: decrement } : {}"
             >
               <i class="fas fa-minus"></i>
             </button>
             <button
               v-on:click.stop
               class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
-              :class="{ disabled: paid }"
-              v-on="!paid ? { click: increment } : {}"
+              :class="{ disabled: locked }"
+              v-on="!locked ? { click: increment } : {}"
             >
               <i class="fas fa-plus"></i>
             </button>
             <button
               v-on:click.stop
               class="btn btn-success flex-grow-1 px-0 py-2 m-0 text-white"
-              :class="{ disabled: paid }"
+              :class="{ disabled: locked }"
               style="border-left: 1px white dotted"
-              v-on="!paid ? { click: increment5 } : {}"
+              v-on="!locked ? { click: increment5 } : {}"
             >
               <span class="fw-bold">5</span>
             </button>
@@ -85,10 +85,11 @@ export default {
       return 0;
     },
     paid: function () {
-      if (this.order) {
-        return this.order.isPaid() || this.order.hasPayer();
-      }
-      return false;
+      return !!this.order && this.order.isPaid();
+    },
+    // Claimed by a member who is paying right now: the order can't be changed.
+    locked: function () {
+      return !!this.order && this.order.hasPayer() && !this.order.isPaid();
     },
   },
   methods: {
@@ -96,10 +97,18 @@ export default {
       return this.amount > 0;
     },
     increment() {
-      this.order.plusProduct(this.product);
+      this.add(1);
     },
     increment5() {
-      this.order.plusProduct(this.product, 5);
+      this.add(5);
+    },
+    add(amount) {
+      if (this.paid) {
+        // The current order is paid: adding a product starts the next order.
+        this.$parent.startNextOrder(this.product, amount);
+      } else {
+        this.order.plusProduct(this.product, amount);
+      }
     },
     decrement() {
       this.order.minusProduct(this.product);

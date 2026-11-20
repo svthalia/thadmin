@@ -7,12 +7,20 @@ class Order {
   synced: boolean;
   _o: _Order | null;
   ageCheckPerformed: boolean;
+  // Unit prices of products added locally, so the total can be shown
+  // instantly without waiting for the server.
+  prices: Record<string, number>;
+  // Incremented on every local change, used to detect changes made while a
+  // request to the server is in flight.
+  localVersion: number;
 
   constructor() {
     this.items = null;
     this.synced = false;
     this._o = null;
     this.ageCheckPerformed = false;
+    this.prices = {};
+    this.localVersion = 0;
   }
 
   public getPK(): string | null {
@@ -37,10 +45,11 @@ class Order {
       return Number(this._o.total_amount);
     }
     if (this.items) {
-      return this.items.reduce(
-        (partialSum, i) => partialSum + (i.total ?? 0),
-        0
-      );
+      return this.items.reduce((partialSum, i) => {
+        const price = this.prices[i.product];
+        if (price !== undefined) return partialSum + price * i.amount;
+        return partialSum + Number(i.total ?? 0);
+      }, 0);
     }
     return null;
   }
@@ -110,8 +119,14 @@ class Order {
     return item;
   }
 
-  public plusProduct(product: Product, amount = 1): void {
+  private markChanged(): void {
     this.synced = false;
+    this.localVersion++;
+  }
+
+  public plusProduct(product: Product, amount = 1): void {
+    this.markChanged();
+    this.prices[product.name] = Number(product.price);
     if (this.items === null) {
       const orderItem = {
         product: product.name,
@@ -139,7 +154,7 @@ class Order {
     if (this.items !== null) {
       const orderItem = this.getOrderItem(product);
       if (orderItem !== null) {
-        this.synced = false;
+        this.markChanged();
         orderItem.amount--;
         if (orderItem.amount === 0) {
           this.items = this.items.filter(
@@ -155,7 +170,7 @@ class Order {
     if (this.items !== null) {
       const orderItem = this.getOrderItem(product);
       if (orderItem !== null) {
-        this.synced = false;
+        this.markChanged();
         this.items = this.items.filter((item) => item.product !== product.name);
       }
     }
@@ -173,7 +188,14 @@ class Order {
     }
   }
 
-  public updateFromAPI(o: _Order): void {
+  public updateFromAPI(o: _Order, sentVersion: number | null = null): void {
+    if (sentVersion !== null && sentVersion !== this.localVersion) {
+      // The order was changed locally while this request was in flight. Keep
+      // the local items (otherwise those clicks are lost) and stay unsynced so
+      // the changes get sent in a follow-up request.
+      this._o = o;
+      return;
+    }
     this.synced = true;
     this._o = o;
     this.items = o.order_items;
@@ -184,13 +206,11 @@ class Order {
   }
 
   public getAPIData(): { order_items: OrderItem[] } {
-    let data = this.items;
-    if (data !== null) {
-      data.forEach((i) => delete i.total);
-    }
-    if (data === null) {
-      data = [];
-    }
+    // Copy the items: mutating them would wipe the locally known totals.
+    const data = (this.items ?? []).map((i) => ({
+      product: i.product,
+      amount: i.amount,
+    }));
     return { order_items: data };
   }
 

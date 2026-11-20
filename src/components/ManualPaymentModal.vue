@@ -13,18 +13,16 @@
           <h5 class="modal-title">Register {{ paymentMethod }} payment</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body text-center">
           <span class="mb-3">To be paid:</span>
           <br />
           <span class="font-oswald fw-bold display-2"
-            >€{{ order.getAmount() }}</span
+            >€{{ order.getAmount()?.toFixed(2) ?? "?" }}</span
           >
           <br />
           <span class="mb-3">{{ order.getDescription() }}</span>
@@ -81,11 +79,21 @@ export default {
       this.order.ageCheckPerformed = !this.order.ageCheckPerformed;
     },
     registerPayment: async function () {
-      let result = await salesService.createPayment(
-        this.order,
-        this.paymentMethod
-      );
-      if (result.payment) this.$parent.done();
+      try {
+        await salesService.createPayment(this.order, this.paymentMethod);
+        // Refresh the order so the order card shows the payment confirmation.
+        await salesService.getOrderDetails(this.order);
+      } catch (e) {
+        alert(
+          `Registering the ${this.paymentMethod} payment failed. Please try again.`
+        );
+        return;
+      }
+      if (!this.order.isPaid()) {
+        alert(
+          `The ${this.paymentMethod} payment could not be confirmed. Please check the order and try again.`
+        );
+      }
     },
   },
 };

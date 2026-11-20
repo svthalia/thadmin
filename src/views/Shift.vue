@@ -76,13 +76,24 @@ export default {
       if (this.order.hasProducts()) {
         clearTimeout(this.fetchOrder);
         this.orderBeingUpdated = true;
-        this.order = await salesService.updateOrder(
-          this.order,
-          parseInt(this.shiftId)
-        );
-        this.orderBeingUpdated = false;
+        try {
+          this.order = await salesService.updateOrder(
+            this.order,
+            parseInt(this.shiftId)
+          );
+        } finally {
+          this.orderBeingUpdated = false;
+        }
       }
+      clearTimeout(this.updateOrderToServer);
       this.updateOrderToServer = null;
+      // Products were added/removed while the request was in flight: send them.
+      if (!this.order.synced && this.order.hasProducts()) {
+        this.updateOrderToServer = setTimeout(
+          this.updateCurrentOrder,
+          this.ORDER_REFRESH_WAIT
+        );
+      }
     },
     fetchOrderUpdates: async function () {
       if (this.order.isPaid()) return;
@@ -113,6 +124,10 @@ export default {
     },
     done: function () {
       this.order = new Order();
+    },
+    startNextOrder: function (product, amount) {
+      this.done();
+      this.order.plusProduct(product, amount);
     },
     reset: function () {
       if (this.orderBeingUpdated || this.updateOrderToServer != null) {
@@ -173,6 +188,7 @@ export default {
     order: {
       handler(val) {
         clearTimeout(this.updateOrderToServer);
+        this.updateOrderToServer = null;
         if (this.awaitingPayment) return;
         if (this.order.isPaid()) return;
         if (!this.order.hasProducts()) return;

@@ -6,7 +6,8 @@
     <div
       v-bind:class="{
         blurred: needsManualSync(),
-        'alert-danger': invalidPayer(),
+        'state-invalid': invalidPayer(),
+        'state-paid': order.isPaid() && !invalidPayer(),
       }"
       style="transition: all 0.5s ease"
     >
@@ -46,42 +47,60 @@
 
       <div class="card-body py-2 px-2 mb-3">
         <div class="px-5">
-          <div v-if="order.hasPayer()">
-            <img
-              class="image-fill"
-              v-if="order.hasPayer()"
-              :src="order.getPayerImage()"
-              :alt="order.getPayer()"
-            />
-            <img
-              class="image-fill"
+          <!-- Fixed square so the card keeps its size between QR code, payer
+               photo and payment confirmation. -->
+          <div class="media-square">
+            <div
+              v-if="order.isPaid() && !invalidPayer()"
+              class="paid-confirmation"
+            >
+              <i class="fas fa-check-circle text-success"></i>
+              <h3 class="font-oswald mt-3 mb-0">Payment received</h3>
+              <p class="m-0">
+                €{{ order.getAmount()?.toFixed(2) ?? "?" }}
+                <span v-if="order._o?.payment?.get_type_display"
+                  >· {{ order._o.payment.get_type_display }}</span
+                >
+              </p>
+            </div>
+            <div v-else-if="order.hasPayer()" class="media-fill">
+              <img
+                class="image-fill"
+                v-if="order.hasPayer()"
+                :src="order.getPayerImage()"
+                :alt="order.getPayer()"
+              />
+              <img
+                class="image-fill"
+                v-else
+                src="@/assets/images/anonymousUser.jpg"
+                alt="anonymous user"
+              />
+            </div>
+            <a
               v-else
-              src="@/assets/images/anonymousUser.jpg"
-              alt="anonymous user"
-            />
+              :href="order.getPaymentUrl()"
+              target="_blank"
+              onclick="return false;"
+              class="media-fill"
+            >
+              <qrcode-vue
+                class="image-fill"
+                v-bind:class="{
+                  blurred:
+                    needsSync() ||
+                    (!order.needsPayment() &&
+                      (!order.isAgeRestricted() ||
+                        (order.isAgeRestricted && order.ageCheckPerformed))),
+                }"
+                v-bind:value="order.getPaymentUrl()"
+                v-bind:size="1024"
+                renderAs="svg"
+                level="M"
+                style="background-color: white; padding: 5px"
+              />
+            </a>
           </div>
-          <a
-            v-else
-            :href="order.getPaymentUrl()"
-            target="_blank"
-            onclick="return false;"
-          >
-            <qrcode-vue
-              class="image-fill"
-              v-bind:class="{
-                blurred:
-                  needsSync() ||
-                  (!order.needsPayment() &&
-                    (!order.isAgeRestricted() ||
-                      (order.isAgeRestricted && order.ageCheckPerformed))),
-              }"
-              v-bind:value="order.getPaymentUrl()"
-              v-bind:size="1024"
-              renderAs="svg"
-              level="M"
-              style="background-color: white; padding: 5px"
-            />
-          </a>
         </div>
       </div>
 
@@ -159,7 +178,15 @@
               I verified that this person is 18+
             </button>
           </div>
+          <!-- Styled like a button so the footer keeps the same height. -->
+          <span
+            class="btn p-1 p-md-2 m-1 font-oswald border-0 text-muted next-order-hint"
+            v-if="order.isPaid()"
+          >
+            Tap a product to start the next order
+          </span>
           <button
+            v-else
             class="btn btn-primary py-1 py-md-2 px-5 m-1 font-oswald"
             v-on:click="done"
             :disabled="
@@ -250,12 +277,44 @@ export default {
 .qr-code canvas {
   position: relative;
 }
-.image-fill {
-  height: 100%;
+.media-square {
   width: 100%;
   max-width: 300px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+.media-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.image-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.state-paid {
+  background-color: var(--bs-success-bg-subtle);
+}
+.state-invalid {
+  background-color: var(--bs-danger-bg-subtle);
+}
+.next-order-hint {
+  pointer-events: none;
 }
 .blurred {
   filter: blur(10px);
+}
+.paid-confirmation {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.paid-confirmation i {
+  font-size: 5rem;
 }
 </style>
