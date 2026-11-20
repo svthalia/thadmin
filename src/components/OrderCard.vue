@@ -12,22 +12,22 @@
       style="transition: all 0.5s ease"
     >
       <div class="card-header">
-        <div class="row m-0 p-0">
-          <div class="col-10 p-0 m-0">
-            <h6 class="m-0 float-start font-oswald fw-normal user-select-none">
-              <span class="user-select-all" v-if="order.getDescription()">{{
-                order.getDescription()
-              }}</span
-              ><span v-else class="user-select-none invisible">No order</span>
-            </h6>
-          </div>
-          <div class="col-2 p-0 m-0" v-if="order && order.getAmount() > 0">
-            <h6 class="float-end m-0 font-oswald fw-normal">
-              <span class="user-select-all"
-                >€{{ order.getAmount()?.toFixed(2) ?? "?" }}</span
-              >
-            </h6>
-          </div>
+        <div class="d-flex align-items-center">
+          <h6
+            class="flex-grow-1 m-0 me-2 text-start font-oswald fw-normal user-select-none"
+          >
+            <span class="user-select-all" v-if="order.getDescription()">{{
+              order.getDescription()
+            }}</span
+            ><span v-else class="user-select-none invisible">No order</span>
+          </h6>
+          <!-- Large, because staff type this amount into the card terminal.
+               Always rendered so the header height doesn't change. -->
+          <span
+            class="order-total font-oswald user-select-all"
+            :class="{ invisible: !(order.getAmount() > 0) }"
+            >€{{ order.getAmount()?.toFixed(2) ?? "0.00" }}</span
+          >
         </div>
       </div>
 
@@ -277,6 +277,12 @@ export default {
 .qr-code canvas {
   position: relative;
 }
+.order-total {
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
 .media-square {
   width: 100%;
   max-width: 300px;
@@ -293,8 +299,7 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
-}
-.state-paid {
+
   background-color: var(--bs-success-bg-subtle);
 }
 .state-invalid {
