@@ -29,12 +29,13 @@ class SalesService {
     const data: { order_items: OrderItem[] } = order?.getAPIData() ?? {
       order_items: [],
     };
+    const sentVersion = order?.localVersion ?? null;
     const result: AxiosResponse<_Order> = await this.apiService.post(
       `/admin/sales/shifts/${shift}/orders/`,
       data
     );
     if (order !== null) {
-      order.updateFromAPI(result.data);
+      order.updateFromAPI(result.data, sentVersion);
       return order;
     }
     return Order.orderFromAPI(result.data);
@@ -45,6 +46,7 @@ class SalesService {
       order = await this.newOrder(shift, order);
       return order;
     }
+    const sentVersion = order.localVersion;
     const result: AxiosResponse<_Order> = await this.apiService.put(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -52,7 +54,7 @@ class SalesService {
       // eslint-disable-next-line @typescript-eslint/ban-types
       order.getAPIData() as {}
     );
-    order.updateFromAPI(result.data);
+    order.updateFromAPI(result.data, sentVersion);
     return order;
   }
 
